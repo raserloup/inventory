@@ -1,0 +1,7 @@
+My Project Details 
+--i use sass for tailwind for stying (npm i sass)
+--For icons i used lucide.dev icons to install it for react(npm install lucide-react)
+--For forms i used npm install -D @tailwindcss/forms and added the below plugins(
+    on tailwind.config.js 
+    in plugins[require('@tailwindcss/forms')]
+)

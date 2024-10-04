@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*this header-bg for HomeNavbar background picture*/
+.header-bg {
+    background-image: url('/header-bg.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
