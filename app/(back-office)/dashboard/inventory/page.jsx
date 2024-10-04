@@ -1,7 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function Inventory() {
-  return (
-    <div>Inventory</div>
-  )
+  return <div>Inventory Creation Options</div>;
 }
