@@ -21,7 +21,7 @@ export default function HomeNavbar() {
       href: "/dashboard/home/updates",
     },
     {
-      title: "Announcments",
+      title: "Announcement",
       href: "/dashboard/home/announcements",
     },
   ];

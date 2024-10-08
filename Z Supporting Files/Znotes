@@ -1,0 +1,73 @@
+My Project Details
+--i use sass for tailwind for styling (npm i sass)
+
+--For icons i used lucide.dev icons to install it for react(npm install lucide-react)
+(for the stroke property i used example:- strokeWidth=".5px")
+
+--For forms i used npm install -D @tailwindcss/forms and added the below plugins
+(
+on tailwind.config.js
+in plugins[require('@tailwindcss/forms')]
+)
+
+for uploading in the Git hub
+{/git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/raserloup/inventory.git
+git push -u origin main /}
+
+--for collapsible components am using shadcn component that are collapsible i used
+npx shadcn@latest init
+For collapsible components
+npx shadcn@latest add collapsible
+
+--For getting the data forms am using React-hook-form install it by below to use (useForms)
+npm install react-hook-form
+
+--For uploading picture and other staff i used uploadingthing.com Api
+to use it 1. create and account create an app in their page and copy the url and paste it the .env file of yours 2.npm install uploadthing @uploadthing/react 3.see the documentation
+
+---For DataBase am Using Mongo Db
+
+---For Queries am Using Prisma ORM
+1.npm install prisma --save-dev
+2.npm install @prisma/client
+3.npx prisma init -datastore-provider mongodb
+4.provide your database connection string in DATABASE_URL in env.file
+5.......continue the configuration scheme config blu blu check the document
+
+--for schema binding to database
+1.npx prisma generate
+--for pushing schema to db
+1.npx prisma db push
+--for instead of every time you go to mongodb atlas use studio
+-npx prisma studio
+
+----For Building the notification i used
+https://react-hot-toast.com/
+npm i react-hot-toast
+and the root layout above the {children} put
+<Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
+
+----For using React Hooks
+https://react-hook-form.com/
+
+----For Creating a Relation Ship on prima Example
+model AddStockAdjustment {
+id String @id @default(auto()) @map("\_id") @db.ObjectId
+title String
+location String?
+description String?
+warehouseType String
+}
+
+-----Help full command while creating the prisma schema
+1.npx prisma format //for formatting and relationship thing
+2.npx prisma generate//for generating a new module
+3.npx prisma db push// for pushing the newly generated module to db
+4.npx prisma studio// to run the studio

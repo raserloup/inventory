@@ -18,7 +18,7 @@ export default function Header() {
     items-center justify-between px-8 border-b border-slate-200 "
     >
       <div className="flex gap-3">
-        {/*Recent activites */}
+        {/*Recent activities */}
         <button>
           <History className="w-6 h-6" />
         </button>

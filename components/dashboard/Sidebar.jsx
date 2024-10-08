@@ -1,6 +1,5 @@
+"use client";
 import {
-  Activity,
-  Album,
   BaggageClaim,
   BarChart4,
   Cable,
@@ -15,7 +14,77 @@ import Link from "next/link";
 import React from "react";
 import SubscriptionCard from "./SubscriptionCard";
 
+import SidebarDropdownLink from "./SidebarDropdownLink";
+
 export default function Sidebar() {
+  const inventoryLinks = [
+    {
+      title: "Items",
+      href: "/dashboard/inventory/", //items/new"
+    },
+    {
+      title: "Catagories",
+      href: "/dashboard/inventory/", //catagories/new"
+    },
+    {
+      title: "Brands",
+      href: "/dashboard/inventory/", ///brands/new
+    },
+    {
+      title: "Units",
+      href: "/dashboard/inventory/", //units/new
+    },
+    {
+      title: "Warehouse",
+      href: "/dashboard/inventory/", //warehouse/new"
+    },
+    {
+      title: "Inventory Adjustment",
+      href: "/dashboard/inventory/", //adjustment/new"
+    },
+    {
+      title: "Supplier",
+      href: "/dashboard/inventory/", //Supplier/new"
+    },
+  ];
+  const SalesLinks = [
+    {
+      title: "Customers",
+      href: "#",
+    },
+    {
+      title: "Sales orders",
+      href: "#",
+    },
+    {
+      title: "Packages",
+      href: "#",
+    },
+    {
+      title: "Shipments",
+      href: "#",
+    },
+    {
+      title: "Invoices",
+      href: "#",
+    },
+    {
+      title: "Sales Recites",
+      href: "#",
+    },
+    {
+      title: "Payment Received",
+      href: "#",
+    },
+    {
+      title: "Sales returns",
+      href: "#",
+    },
+    {
+      title: "Credit Notes",
+      href: "#",
+    },
+  ];
   return (
     <div
       className="w-60
@@ -44,14 +113,18 @@ export default function Sidebar() {
             <Home className="w-4 h-4" />
             <span>Home</span>
           </Link>
-          <button className="p-2 flex items-center space-x-2">
-            <BaggageClaim className="w-4 h-4" />
-            <span>Inventory</span>
-          </button>
-          <button className=" p-2 flex items-center space-x-2">
-            <ShoppingBasket className="w-4 h-4" />
-            <span>Sales</span>
-          </button>
+          {/*  Collapsible Inventory*/}
+          <SidebarDropdownLink
+            items={inventoryLinks}
+            title="Inventory"
+            icon={BaggageClaim}
+          />
+          {/*  Collapsible Sales*/}
+          <SidebarDropdownLink
+            items={SalesLinks}
+            title="Sales"
+            icon={ShoppingBag}
+          />
           <button className=" p-2 flex items-center space-x-2">
             <ShoppingBag className="w-4 h-4" />
             <span>Purchases</span>
@@ -81,8 +154,8 @@ export default function Sidebar() {
           <ChevronLeft />
         </button>
       </div>
-      {/*  Subscrption Card */}
-      {/*  Fottor Icon */}
+      {/*  Subscription Card */}
+      {/*  Footer Icon */}
     </div>
   );
 }

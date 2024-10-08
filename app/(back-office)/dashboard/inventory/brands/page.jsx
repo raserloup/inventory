@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function ItemGroups() {
+export default function Brands() {
   return (
     <div>
-      <h2>Item Groups</h2>
+      <h2>Brands goes here</h2>
     </div>
   );
 }
