@@ -4,7 +4,6 @@ import FormHeader from "@/components/dashboard/FormHeader";
 import TransferInventoryForm from "@/components/dashboard/TransferInventoryform";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import { React } from "react";
 
 export default function NewAdjustments() {
   const tabs = [

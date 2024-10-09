@@ -4,24 +4,39 @@ import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
+import { makePOSTRequest } from "@/lib/apiRequest";
 
 import { React, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
 export default function TransferInventoryForm() {
+  const items = [
+    {
+      label: "Item A",
+      value: "00024",
+    },
+    {
+      label: "Item B",
+      value: "00025",
+    },
+    {
+      label: "Item C",
+      value: "000256",
+    },
+  ];
   const branches = [
     {
       label: "Branch A",
-      value: "thysfkhasdfu345",
+      value: "Branch000234",
     },
     {
       label: "Branch B",
-      value: "lashdf0937459235",
+      value: "Branch000235",
     },
     {
       label: "Branch C",
-      value: "lashdf0937459235",
+      value: "Branch000235",
     },
   ];
   const {
@@ -33,25 +48,13 @@ export default function TransferInventoryForm() {
   const [loading, setLoading] = useState(false);
   async function onSubmit(data) {
     console.log(data);
-    setLoading(true);
-    const baseUrl = "http://localhost:3000";
-    try {
-      const response = await fetch(`${baseUrl}/api/adjustments/transfer`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        console.log(response);
-        reset();
-        setLoading(false);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
+    makePOSTRequest(
+      setLoading,
+      "api/adjustments/transfer",
+      data,
+      "StockAdjustment",
+      reset
+    );
   }
   return (
     <form
@@ -69,7 +72,15 @@ export default function TransferInventoryForm() {
           name="referenceNumber"
           register={register}
           errors={errors}
-          // defaultValue="refeeff"
+          // defaultValue="We will you this later since the reference number is a default value"
+          className="w-full"
+        />
+        <SelectInput
+          register={register}
+          className="w-full"
+          name="itemId"
+          label="Select the Item"
+          options={items}
         />
         <TextInput
           type="number"
@@ -77,31 +88,27 @@ export default function TransferInventoryForm() {
           name="transferStockQty"
           register={register}
           errors={errors}
-          // className="w-full"
           placeholder=" Type the transfer Stock Qty "
         />
         <SelectInput
           register={register}
           className="w-full"
-          name="warehouseId"
+          name="givingWarehouseId"
           label="Select the Warehouse that will give the Stock"
           options={branches}
         />
         <SelectInput
           register={register}
           className="w-full"
-          name="receivingWarehouseID"
-          label="Select the Warehouse that will that will receive Stock"
+          name="receivingWarehouseId"
+          label="Select the Warehouse that will receive Stock"
           options={branches}
         />
-
-        {/* Ware house description */}
         <TextAreaInput
           label="Adjustment Notes"
           name="notes"
           register={register}
           errors={errors}
-          //placeholder=" Type the Warehouse Description "
         />
       </div>
       <SubmitButton isloading={loading} title="Adjustment" />

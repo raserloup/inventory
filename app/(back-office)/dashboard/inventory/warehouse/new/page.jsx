@@ -4,6 +4,7 @@ import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
+import { makePOSTRequest } from "@/lib/apiRequest";
 
 import { React, useState } from "react";
 
@@ -30,26 +31,7 @@ export default function NewWarehouse() {
   const [loading, setLoading] = useState(false);
   async function onSubmit(data) {
     console.log(data);
-    setLoading(true);
-    const baseUrl = "http://localhost:3000";
-    try {
-      const response = await fetch(`${baseUrl}/api/warehouse`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        console.log(response);
-        toast.success("New warehouse created Successfully");
-        setLoading(false);
-        reset();
-      }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
+    makePOSTRequest(setLoading, "api/warehouse", data, "Warehouse", reset);
   }
   return (
     <div>

@@ -3,11 +3,11 @@ import FormHeader from "@/components/dashboard/FormHeader";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
+import { makePOSTRequest } from "@/lib/apiRequest";
 
-import { React, useState } from "react";
+import { useState } from "react";
 
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 export default function NewSupplier() {
   const {
@@ -19,26 +19,8 @@ export default function NewSupplier() {
   const [loading, setLoading] = useState(false);
   async function onSubmit(data) {
     console.log(data);
-    setLoading(true);
-    const baseUrl = "http://localhost:3000";
-    try {
-      const response = await fetch(`${baseUrl}/api/supplier`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        console.log(response);
-        toast.success("New Supplier created Successfully");
-        setLoading(false);
-        reset();
-      }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
+    //here api post happens
+    makePOSTRequest(setLoading, "api/suppliers", data, "Supplier", reset);
   }
   return (
     <div>
@@ -57,7 +39,7 @@ export default function NewSupplier() {
         >
           <TextInput
             label="Supplier Name"
-            name="name"
+            name="title"
             register={register}
             errors={errors}
             className="w-full"

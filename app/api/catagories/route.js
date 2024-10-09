@@ -12,8 +12,6 @@ export async function POST(request) {
                 description: description
             }
         });
-        /* for console log it 
-        const category = { title, description };*/
         console.log(category)
         return NextResponse.json(category)
 
@@ -23,6 +21,22 @@ export async function POST(request) {
         return NextResponse.json({
             error,
             message: "Failed to create a category"
+        }, { status: 500 })
+    }
+}
+export async function GET(request) {
+    try {
+        const categories = await db.category.findMany({
+            orderBy: {
+                createdAt: 'desc' //latest Warehouse
+            },
+        });
+        return NextResponse.json(categories);
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({
+            error,
+            message: "Failed to Fetch the category"
         }, { status: 500 })
     }
 }
