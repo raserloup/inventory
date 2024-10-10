@@ -10,35 +10,7 @@ import { React, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function TransferInventoryForm() {
-  const items = [
-    {
-      label: "Item A",
-      value: "00024",
-    },
-    {
-      label: "Item B",
-      value: "00025",
-    },
-    {
-      label: "Item C",
-      value: "000256",
-    },
-  ];
-  const branches = [
-    {
-      label: "Branch A",
-      value: "Branch000234",
-    },
-    {
-      label: "Branch B",
-      value: "Branch000235",
-    },
-    {
-      label: "Branch C",
-      value: "Branch000235",
-    },
-  ];
+export default function TransferInventoryForm({ items, warehouse }) {
   const {
     register,
     handleSubmit,
@@ -74,6 +46,7 @@ export default function TransferInventoryForm() {
           errors={errors}
           // defaultValue="We will you this later since the reference number is a default value"
           className="w-full"
+          placeholder="Type the reference number"
         />
         <SelectInput
           register={register}
@@ -95,14 +68,14 @@ export default function TransferInventoryForm() {
           className="w-full"
           name="givingWarehouseId"
           label="Select the Warehouse that will give the Stock"
-          options={branches}
+          options={warehouse}
         />
         <SelectInput
           register={register}
           className="w-full"
           name="receivingWarehouseId"
           label="Select the Warehouse that will receive Stock"
-          options={branches}
+          options={warehouse}
         />
         <TextAreaInput
           label="Adjustment Notes"

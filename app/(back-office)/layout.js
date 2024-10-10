@@ -1,6 +1,6 @@
 import Header from '@/components/dashboard/Header'
 import Sidebar from '@/components/dashboard/Sidebar'
-import React from 'react'
+
 
 export default function layout({ children }) {
     return (

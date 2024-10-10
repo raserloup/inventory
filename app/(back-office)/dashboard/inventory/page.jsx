@@ -11,8 +11,6 @@ import {
   Warehouse,
 } from "lucide-react";
 
-import React from "react";
-
 export default function Inventory() {
   const optionCards = [
     {
@@ -76,7 +74,7 @@ export default function Inventory() {
 
   return (
     <div className="bg-slate-50">
-      <FixedHeader newLink="/dashboard/inventory/items/new" />
+      <FixedHeader title="All Items" newLink="/dashboard/inventory/items/new" />
       {/* the div is responsible for mapping the option cards*/}
       {/* For small screen only show one Grid "grid-cols-1 "*/}
       {/* For Medium screen only show two Grid "grid-cols-2"*/}

@@ -37,3 +37,24 @@ export async function POST(request) {
         }, { status: 500 })
     }
 }
+export async function GET(request) {
+    try {
+        const items = await db.item.findMany({
+            orderBy: {
+                createdAt: 'desc' //latest items
+            },
+            // findMAny(include or select or... have much options so go and check the prisma documentation 
+            include: {
+                category: true, //Returns all fields for all categories
+                // suppliers: true//Returns all suppliers fields
+            }
+        });
+        return NextResponse.json(items);
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({
+            error,
+            message: "Failed to Fetch the items"
+        }, { status: 500 })
+    }
+}

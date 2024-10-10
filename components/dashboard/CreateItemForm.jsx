@@ -35,6 +35,7 @@ export default function CreateItemForm({
     data.imageUrl = imageUrl; //(if the image uploadthing worked you this)
     console.log(data);
     makePOSTRequest(setLoading, "api/items", data, "Items", reset);
+    setImageUrl("");
   }
   return (
     <form

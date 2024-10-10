@@ -1,5 +1,4 @@
 import { X } from "lucide-react";
-import Link from "next/link";
 import React from "react";
 
 export default function FormHeader({ title, href }) {
@@ -9,9 +8,13 @@ export default function FormHeader({ title, href }) {
   bg-white py-3 px-16"
     >
       <h2 className="text-xl font-semibold">{title}</h2>
-      <Link href={href}>
+      {/*Here i used <a> tag instead of <Link>
+       b/c i wanted the page to reload b/c after 
+       inserting data page has to refresh for
+        fetching the newly inserted data  */}
+      <a href={href}>
         <X />
-      </Link>
+      </a>
     </div>
   );
 }

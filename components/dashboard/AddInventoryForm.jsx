@@ -10,43 +10,7 @@ import { React, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function AddInventoryForm() {
-  const items = [
-    {
-      label: "Item A",
-      value: "00024",
-    },
-    {
-      label: "Item B",
-      value: "00025",
-    },
-    {
-      label: "Item C",
-      value: "000256",
-    },
-  ];
-  const branches = [
-    {
-      label: "Branch A",
-      value: "thysfkhasdfu345",
-    },
-    {
-      label: "Branch B",
-      value: "lashdf0937459235",
-    },
-    {
-      label: "Branch C",
-      value: "lashdf0937459235",
-    },
-    {
-      label: "Main A ",
-      value: "lashdf0937459235",
-    },
-    {
-      label: "Main B ",
-      value: "lashdf0937459235",
-    },
-  ];
+export default function AddInventoryForm({ items, warehouse }) {
   const {
     register,
     handleSubmit,
@@ -76,11 +40,14 @@ export default function AddInventoryForm() {
         sm:gap-6"
       >
         <TextInput
+          type="text" //by default it will be text so you can remove this type
           label="Reference Number"
           name="referenceNumber"
           register={register}
           errors={errors}
           //defaultValue="refeeff"
+          className="w-full"
+          placeholder="Type the reference number"
         />
         <SelectInput
           register={register}
@@ -103,7 +70,7 @@ export default function AddInventoryForm() {
           className="w-full"
           name="receivingWarehouseId"
           label="Select the Warehouse that will receive the Stock"
-          options={branches}
+          options={warehouse}
         />
 
         <TextAreaInput

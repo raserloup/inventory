@@ -3,6 +3,10 @@ import Link from "next/link";
 import React from "react";
 
 export default function OptionCard({ optionData }) {
+  /*if (!Array.isArray(optionData)) {
+    console.error("Data provided is not an array:", optionData);
+    return <p>No data available</p>;
+  }*/
   const {
     title,
     description,

@@ -7,11 +7,9 @@ import {
   Files,
   Home,
   ShoppingBag,
-  ShoppingBasket,
   ShoppingCart,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import SubscriptionCard from "./SubscriptionCard";
 
 import SidebarDropdownLink from "./SidebarDropdownLink";
@@ -19,32 +17,36 @@ import SidebarDropdownLink from "./SidebarDropdownLink";
 export default function Sidebar() {
   const inventoryLinks = [
     {
-      title: "Items",
-      href: "/dashboard/inventory/", //items/new"
+      title: "All Items",
+      href: "/dashboard/inventory/",
     },
     {
-      title: "Catagories",
-      href: "/dashboard/inventory/", //catagories/new"
+      title: "Items",
+      href: "/dashboard/inventory/items", //items/new"
+    },
+    {
+      title: "Categories",
+      href: "/dashboard/inventory/catagories", //catagories/new"
     },
     {
       title: "Brands",
-      href: "/dashboard/inventory/", ///brands/new
+      href: "/dashboard/inventory/brands", ///brands/new
     },
     {
       title: "Units",
-      href: "/dashboard/inventory/", //units/new
+      href: "/dashboard/inventory/units", //units/new
     },
     {
       title: "Warehouse",
-      href: "/dashboard/inventory/", //warehouse/new"
+      href: "/dashboard/inventory/warehouse", //warehouse/new"
     },
     {
       title: "Inventory Adjustment",
-      href: "/dashboard/inventory/", //adjustment/new"
+      href: "/dashboard/inventory/adjustments", //adjustment/new"
     },
     {
       title: "Supplier",
-      href: "/dashboard/inventory/", //Supplier/new"
+      href: "/dashboard/inventory/suppliers", //Supplier/new"
     },
   ];
   const SalesLinks = [

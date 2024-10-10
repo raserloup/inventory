@@ -6,20 +6,19 @@ import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
 import { makePOSTRequest } from "@/lib/apiRequest";
 
-import { React, useState } from "react";
+import { useState } from "react";
 
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 export default function NewWarehouse() {
   const selectOptions = [
     {
-      label: "Main",
-      value: "main",
+      title: "Main",
+      id: "main",
     },
     {
-      label: "Branch",
-      value: "branch",
+      title: "Branch",
+      id: "branch",
     },
   ];
   const {
@@ -36,7 +35,7 @@ export default function NewWarehouse() {
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New warehouse" href="/dashboard/inventory/" />
+      <FormHeader title="New warehouse" href="/dashboard/inventory/warehouse" />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}

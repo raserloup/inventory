@@ -8,6 +8,7 @@ export async function POST(request) {
             givingWarehouseId,
             receivingWarehouseId, notes,
         } = await request.json();
+
         const adjustment =
             await db.transferStockAdjustment.create({
                 data: {
@@ -27,6 +28,22 @@ export async function POST(request) {
         return NextResponse.json({
             error,
             message: "Failed to create adjustment"
+        }, { status: 500 })
+    }
+}
+export async function GET(request) {
+    try {
+        const adjustments = await db.transferStockAdjustment.findMany({
+            orderBy: {
+                createdAt: 'desc' //latest transfer stock
+            },
+        });
+        return NextResponse.json(adjustments);
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({
+            error,
+            message: "Failed to Fetch the adjustments"
         }, { status: 500 })
     }
 }

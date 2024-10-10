@@ -22,7 +22,7 @@ export default function NewUnit() {
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Units" href="/dashboard/inventory/" />
+      <FormHeader title="New Units" href="/dashboard/inventory/units" />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
