@@ -3,9 +3,10 @@ import { getData } from "@/lib/getData";
 import DataTable from "@/components/dashboard/DataTable";
 
 export default async function Suppliers() {
-  const suppliers = await getData("suppliers");
-  const data = suppliers.map((obj) => {
+  const Supplier = await getData("suppliers");
+  const Suppliers = Supplier.map((obj) => {
     return {
+      id: obj.id,
       title: obj.title,
       phone: obj.phone,
       email: obj.email,
@@ -22,7 +23,11 @@ export default async function Suppliers() {
       />
       {/*Table */}
       <div className="my-4 p-8">
-        <DataTable data={data} columns={columns} />
+        <DataTable
+          data={Suppliers}
+          columns={columns}
+          resourceTitle="suppliers"
+        />
       </div>
     </div>
   );

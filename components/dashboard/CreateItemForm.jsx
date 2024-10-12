@@ -1,15 +1,11 @@
 "use client";
-import FormHeader from "@/components/dashboard/FormHeader";
+
 import ImageInput from "@/components/FormInputs/ImageInput";
 import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
 import { makePOSTRequest } from "@/lib/apiRequest";
-import { getData } from "@/lib/getData";
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
-import { Pencil } from "lucide-react";
-import Image from "next/image";
 
 import { React, useState } from "react";
 
@@ -48,13 +44,21 @@ export default function CreateItemForm({
         className="grid gap-4 sm:grid-cols-2 
         sm:gap-6"
       >
+        <SelectInput
+          name="warehouseId"
+          label="Select Warehouse Title"
+          register={register}
+          className="w-full"
+          options={warehouses}
+        />
+
         <TextInput
-          label="Warehouse Title"
+          label="Item Title"
           name="title"
           register={register}
           errors={errors}
           className="w-full"
-          placeholder=" Type the Warehouse Title "
+          placeholder="Provide the Item Title"
         />
         <SelectInput
           name="categoryId"
@@ -193,7 +197,7 @@ export default function CreateItemForm({
           endpoint="imageUploader"
         />
       </div>
-      <SubmitButton isloading={loading} title="Item" />
+      <SubmitButton isloading={loading} title="Item" imageUrl="imageUrl" />
     </form>
   );
 }

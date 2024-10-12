@@ -1,4 +1,5 @@
 import {
+  AlignJustify,
   Bell,
   ChevronDown,
   History,
@@ -11,21 +12,30 @@ import React from "react";
 import SearchInput from "./SearchInput";
 import Image from "next/image";
 
-export default function Header() {
+export default function Header({ setShowSidebar }) {
+  function handleClick() {
+    console.log("Btn Clicked");
+  }
   return (
     <div
       className="bg-gray-100 h-12 flex 
-    items-center justify-between px-8 border-b border-slate-200 "
+    items-center justify-between px-8 border-b
+     border-slate-200 "
     >
+      {/*when we press this three dot for small screen
+        should show as side bar */}
+      <button className="lg:hidden" onClick={() => setShowSidebar(true)}>
+        <AlignJustify className="w-6 h-6" />
+      </button>
       <div className="flex gap-3">
         {/*Recent activities */}
-        <button>
+        <button className="hidden lg:block">
           <History className="w-6 h-6" />
         </button>
         {/*Search */}
         <SearchInput />
       </div>
-      <div className="flex items-center gap-3">
+      <div className=" items-center gap-3 hidden lg:flex">
         {/*Plus Icons - with ToolTip -*/}
         <div
           className="pr-2 border-r
@@ -73,16 +83,7 @@ export default function Header() {
             <span>Er.Studio</span>
             <ChevronDown className="w-4 h-4" />
           </button>
-          <button>
-            <Image
-              src="/user.jpg"
-              alt="user image"
-              width={2448}
-              height={3264}
-              className="w-8 h-9 rounded-full
-              border border-slate-800"
-            />
-          </button>
+
           <button>
             <LayoutGrid
               className="w-6 h-6
@@ -90,8 +91,19 @@ export default function Header() {
             />
           </button>
         </div>
+
         {/* */}
       </div>
+      <button>
+        <Image
+          src="/user.jpg"
+          alt="user image"
+          width={2448}
+          height={3264}
+          className="w-8 h-9 rounded-full
+              border border-slate-800 "
+        />
+      </button>
     </div>
   );
 }

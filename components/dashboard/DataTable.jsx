@@ -2,12 +2,13 @@ import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-export default function DataTable({ data, columns }) {
+export default function DataTable({ data = [], columns = [], resourceTitle }) {
   {
     /*const headerTitles = Object.keys(data[0]);*/
   }
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg ">
+      {/* Here if you change the table w-full to w-auto to fixed the size with grabbed data */}
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -40,7 +41,7 @@ export default function DataTable({ data, columns }) {
                 })}
                 <td className="px-6 py-4 text-right flex items-center space-x-4 ">
                   <Link
-                    href="#"
+                    href={`/dashboard/inventory/${resourceTitle}/update/${item.id}`}
                     className="font-medium text-blue-600 
                   dark:text-blue-500  flex items-center space-x-1"
                   >

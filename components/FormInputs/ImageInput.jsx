@@ -1,7 +1,7 @@
-import { UploadDropzone } from "@/lib/uploadthing";
+import React from "react";
+import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
-import React from "react";
 
 export default function ImageInput({
   Label,
@@ -23,7 +23,7 @@ export default function ImageInput({
           <button
             onClick={() => setImageUrl("")}
             type="button"
-            className="flex space-x-2  bg-slate-900 rounded-md shadow text-slate-50  py-2 px-4"
+            className="flex space-x-2 bg-slate-900 rounded-md shadow text-slate-50 py-2 px-4"
           >
             <Pencil className="w-5 h-5" />
             <span>Change Image</span>
@@ -43,13 +43,11 @@ export default function ImageInput({
           endpoint={endpoint}
           onClientUploadComplete={(res) => {
             setImageUrl(res[0].fileUrl);
-            // Do something with the response
             console.log("Files: ", res);
             alert("Upload Completed");
             console.log("Upload Completed");
           }}
           onUploadError={(error) => {
-            // Do something with the error.
             alert(`ERROR! ${error.message}`);
             console.log(`ERROR! ${error.message}`);
           }}

@@ -2,27 +2,54 @@
 import FormHeader from "@/components/dashboard/FormHeader";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function NewUnit() {
+export default function NewUnit({ initialDataById = {}, isUpdate = false }) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: initialDataById,
+  });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/units");
+    //Here we tried to redirect the page after update the data
+    //but the data on data table needs page refreshing
+    //fix this later
+  }
   async function onSubmit(data) {
     console.log(data);
-    makePOSTRequest(setLoading, "api/units", data, "Unit", reset);
+    if (isUpdate) {
+      //PUT request here
+      makePUTRequest(
+        setLoading,
+        `api/units/${initialDataById.id}`,
+        data,
+        "units",
+        redirect, //after updating for page redirection
+        reset
+      );
+    } else {
+      //POST request here
+      makePOSTRequest(setLoading, "api/units", data, "units", reset);
+    }
   }
+
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Units" href="/dashboard/inventory/units" />
+      <FormHeader
+        title={isUpdate ? "Update unit" : "New Unit"}
+        href="/dashboard/inventory/units"
+      />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -51,7 +78,11 @@ export default function NewUnit() {
             placeholder=" Type the Units Abbreviation "
           />
         </div>
-        <SubmitButton isloading={loading} title="units" />
+        <SubmitButton
+          isloading={loading}
+          title={isUpdate ? "Update unit" : "New Unit"}
+          href="/dashboard/inventory/units"
+        />
       </form>
     </div>
   );

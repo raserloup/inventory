@@ -23,7 +23,10 @@ export default function AdjustmentForm({ items, warehouse }) {
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Adjustments" href="/dashboard/inventory/" />
+      <FormHeader
+        title="New Adjustments"
+        href="/dashboard/inventory/adjustments"
+      />
 
       {/*Tabs */}
 

@@ -4,13 +4,18 @@ import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function NewWarehouse() {
+export default function NewWarehouse({
+  initialDataById = {},
+  isUpdate = false,
+}) {
+  const router = useRouter();
   const selectOptions = [
     {
       title: "Main",
@@ -26,16 +31,39 @@ export default function NewWarehouse() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: initialDataById,
+  });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/warehouse");
+    //Here we tried to redirect the page after update the data
+    //but the data on data table needs page refreshing
+    //fix this later
+  }
   async function onSubmit(data) {
     console.log(data);
-    makePOSTRequest(setLoading, "api/warehouse", data, "Warehouse", reset);
+    if (isUpdate) {
+      //PUT request here
+      makePUTRequest(
+        setLoading,
+        `api/warehouse/${initialDataById.id}`,
+        data,
+        "Warehouse",
+        redirect, //after updating for page redirection
+        reset
+      );
+    } else {
+      makePOSTRequest(setLoading, "api/warehouse", data, "Warehouse", reset);
+    }
   }
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New warehouse" href="/dashboard/inventory/warehouse" />
+      <FormHeader
+        title={isUpdate ? "Update Warehouse" : "New warehouse"}
+        href="/dashboard/inventory/warehouse"
+      />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -80,7 +108,11 @@ export default function NewWarehouse() {
             placeholder=" Type the Warehouse Description "
           />
         </div>
-        <SubmitButton isloading={loading} title="Warehouse" />
+        <SubmitButton
+          isloading={loading}
+          title={isUpdate ? "Updated Warehouse" : "New warehouse"}
+          href="/dashboard/inventory/warehouse"
+        />
       </form>
     </div>
   );

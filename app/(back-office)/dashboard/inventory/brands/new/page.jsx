@@ -2,29 +2,55 @@
 import FormHeader from "@/components/dashboard/FormHeader";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function NewBrand() {
+export default function NewBrand({ initialDataById = {}, isUpdate = false }) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+    //Here i use react hock for initialize form values using defaultValues
+  } = useForm({
+    defaultValues: initialDataById,
+  });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/brands");
+    //Here we tried to redirect the page after update the data
+    //but the data on data table needs page refreshing
+    //fix this later
+  }
   async function onSubmit(data) {
     console.log(data);
-
-    makePOSTRequest(setLoading, "api/brands", data, "Brands", reset);
+    if (isUpdate) {
+      //PUT request here
+      makePUTRequest(
+        setLoading,
+        `api/brands/${initialDataById.id}`,
+        data,
+        "brands",
+        redirect, //after updating for page redirection
+        reset
+      );
+    } else {
+      //POST request here
+      makePOSTRequest(setLoading, "api/brands", data, "Brands", reset);
+    }
   }
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Brand" href="/dashboard/inventory/brands" />
+      <FormHeader
+        title={isUpdate ? "Update Brand" : "New Brand"}
+        href="/dashboard/inventory/brands"
+      />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -43,7 +69,11 @@ export default function NewBrand() {
             placeholder=" Type the Brands Title "
           />
         </div>
-        <SubmitButton isloading={loading} title="Brand" />
+        <SubmitButton
+          isloading={loading}
+          title={isUpdate ? "Updated Brand" : "New Brand"}
+          href="/dashboard/inventory/brands"
+        />
       </form>
     </div>
   );

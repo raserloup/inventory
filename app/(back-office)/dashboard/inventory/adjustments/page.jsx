@@ -1,9 +1,37 @@
-import React from "react";
+import FixedHeader from "@/components/dashboard/FixedHeader";
+import { getData } from "@/lib/getData";
+import DataTable from "@/components/dashboard/DataTable";
 
-export default function Adjustments() {
+export default async function Adjustments() {
+  const addAdjustmentsData = getData("adjustments/add");
+  const transferAdjustmentsData = getData("adjustments/transfer");
+
+  const [addAdjustments, transferAdjustments] = await Promise.all([
+    addAdjustmentsData,
+    transferAdjustmentsData,
+  ]);
+  const addcolumns = ["referenceNumber", "addStockQty"];
+  const transfercolumns = ["referenceNumber", "transferStockQty"];
   return (
     <div>
-      <h2>adjustments</h2>
+      {/*Header */}
+      <FixedHeader
+        title="Adjustments"
+        newLink="/dashboard/inventory/adjustments/new"
+      />
+      {/*Table */}
+      <div className="my-4 p-8">
+        <h2 className="border bottom-2  bg-slate-50 border-cyan-500 flex justify-between items-center py-4 font-semibold">
+          Stock Increment Adjustment
+        </h2>
+        <DataTable data={addAdjustments} columns={addcolumns} />
+      </div>
+      <div className="my-4 p-8">
+        <h2 className="border bottom-2 bg-slate-50 border-cyan-500 flex justify-between items-center py-4 font-semibold">
+          Stock Transfer Adjustment
+        </h2>
+        <DataTable data={transferAdjustments} columns={transfercolumns} />
+      </div>
     </div>
   );
 }

@@ -3,28 +3,54 @@ import FormHeader from "@/components/dashboard/FormHeader";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
 
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function NewCategory() {
+export default function NewCategory({
+  initialDataById = {},
+  isUpdate = false,
+}) {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: initialDataById,
+  });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/catagories");
+    //Here we tried to redirect the page after update the data
+    //but the data on data table needs page refreshing
+    //fix this later
+  }
   async function onSubmit(data) {
     console.log(data);
-    makePOSTRequest(setLoading, "api/catagories", data, "Catagories", reset);
+    if (isUpdate) {
+      //PUT request here
+      makePUTRequest(
+        setLoading,
+        `api/catagories/${initialDataById.id}`,
+        data,
+        "Category",
+        redirect, //after updating for page redirection
+        reset
+      );
+    } else {
+      makePOSTRequest(setLoading, "api/catagories", data, "Category", reset);
+    }
   }
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Category" href="/dashboard/inventory/catagories" />
+      <FormHeader
+        title={isUpdate ? "Update Category" : "New Categories"}
+        href="/dashboard/inventory/catagories"
+      />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -51,7 +77,11 @@ export default function NewCategory() {
             placeholder=" Type the Category Description "
           />
         </div>
-        <SubmitButton isloading={loading} title="Category" />
+        <SubmitButton
+          isloading={loading}
+          title={isUpdate ? "Updated Category" : "New Categories"}
+          href="/dashboard/inventory/catagories"
+        />
       </form>
     </div>
   );

@@ -6,7 +6,7 @@ export async function POST(request) {
         const { title, description } = await request.json();
 
         // for prisma use
-        const category = await db.category.create({
+        const category = await db.Category.create({
             data: {
                 title: title,
                 description: description
@@ -26,12 +26,12 @@ export async function POST(request) {
 }
 export async function GET(request) {
     try {
-        const categories = await db.category.findMany({
+        const category = await db.Category.findMany({
             orderBy: {
                 createdAt: 'desc' //latest Warehouse
             },
         });
-        return NextResponse.json(categories);
+        return NextResponse.json(category);
     } catch (error) {
         console.log(error)
         return NextResponse.json({

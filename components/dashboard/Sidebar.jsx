@@ -8,13 +8,15 @@ import {
   Home,
   ShoppingBag,
   ShoppingCart,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import SubscriptionCard from "./SubscriptionCard";
 
 import SidebarDropdownLink from "./SidebarDropdownLink";
 
-export default function Sidebar() {
+export default function Sidebar({ showSidebar, setShowSidebar }) {
+  console.log(showSidebar);
   const inventoryLinks = [
     {
       title: "All Items",
@@ -22,31 +24,31 @@ export default function Sidebar() {
     },
     {
       title: "Items",
-      href: "/dashboard/inventory/items", //items/new"
+      href: "/dashboard/inventory/items",
     },
     {
       title: "Categories",
-      href: "/dashboard/inventory/catagories", //catagories/new"
+      href: "/dashboard/inventory/catagories",
     },
     {
       title: "Brands",
-      href: "/dashboard/inventory/brands", ///brands/new
+      href: "/dashboard/inventory/brands",
     },
     {
       title: "Units",
-      href: "/dashboard/inventory/units", //units/new
+      href: "/dashboard/inventory/units",
     },
     {
       title: "Warehouse",
-      href: "/dashboard/inventory/warehouse", //warehouse/new"
+      href: "/dashboard/inventory/warehouse",
     },
     {
       title: "Inventory Adjustment",
-      href: "/dashboard/inventory/adjustments", //adjustment/new"
+      href: "/dashboard/inventory/adjustments",
     },
     {
       title: "Supplier",
-      href: "/dashboard/inventory/suppliers", //Supplier/new"
+      href: "/dashboard/inventory/suppliers",
     },
   ];
   const SalesLinks = [
@@ -89,22 +91,32 @@ export default function Sidebar() {
   ];
   return (
     <div
-      className="w-60
-    min-h-screen bg-slate-800
-    text-slate-50 justify-between fixed"
+      className={`${
+        showSidebar
+          ? "w-60 min-h-screen bg-slate-800 text-slate-50  justify-between fixed lg:block z-50"
+          : "w-60 min-h-screen bg-slate-800 text-slate-50 justify-between fixed hidden lg:block z-50"
+      }`}
     >
       {/* Top Part*/}
       <div className="flex flex-col">
-        {/*  Logo */}
-        <Link
-          href="#"
-          className="bg-slate-950 
+        {/* Inventory Logo */}
+        <div className="flex justify-between">
+          <Link
+            href="#"
+            className="bg-slate-950 
         flex space-x-2 
-        items-center py-3 px-2 "
-        >
-          <ShoppingCart />
-          <span className=" text-x1 font-semibold">Inventory</span>
-        </Link>
+        items-center py-3 px-2 w-full"
+          >
+            <ShoppingCart />
+            <span className=" text-x1 font-semibold">Inventory</span>
+          </Link>
+          <button
+            className="py-3 px-4 bg-slate-950 lg:hidden"
+            onClick={() => setShowSidebar(false)}
+          >
+            <X className="h-6 w-6 text-white " />
+          </button>
+        </div>
         {/*  Links */}
         <nav className="flex flex-col gap-3 px-3 py-6">
           <Link
@@ -120,6 +132,7 @@ export default function Sidebar() {
             items={inventoryLinks}
             title="Inventory"
             icon={BaggageClaim}
+            setShowSidebar={setShowSidebar}
           />
           {/*  Collapsible Sales*/}
           <SidebarDropdownLink

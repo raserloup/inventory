@@ -3,29 +3,59 @@ import FormHeader from "@/components/dashboard/FormHeader";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function NewSupplier() {
+export default function NewSupplier({
+  initialDataById = {},
+  isUpdate = false,
+}) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: initialDataById,
+  });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/suppliers");
+    //Here we tried to redirect the page after update the data
+    //but the data on data table needs page refreshing
+    //fix this later
+  }
+
   async function onSubmit(data) {
     console.log(data);
-    //here api post happens
-    makePOSTRequest(setLoading, "api/suppliers", data, "Supplier", reset);
+
+    if (isUpdate) {
+      //PUT request here
+      makePUTRequest(
+        setLoading,
+        `api/suppliers/${initialDataById.id}`,
+        data,
+        "Supplier",
+        redirect, //after updating for page redirection
+        reset
+      );
+    } else {
+      //POST request here
+      makePOSTRequest(setLoading, "api/suppliers", data, "Supplier", reset);
+    }
   }
   return (
     <div>
       {/*Header */}
-      <FormHeader title="New Suppliers" href="/dashboard/inventory/suppliers" />
+      <FormHeader
+        title={isUpdate ? "Update suppliers" : "New suppliers"}
+        href="/dashboard/inventory/suppliers"
+      />
       {/*Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -110,7 +140,11 @@ export default function NewSupplier() {
             placeholder=" Provide if any notes you have to.. "
           />
         </div>
-        <SubmitButton isloading={loading} title="Supplier" />
+        <SubmitButton
+          isloading={loading}
+          title={isUpdate ? "Updated suppliers" : "New suppliers"}
+          href="/dashboard/inventory/suppliers"
+        />
       </form>
     </div>
   );

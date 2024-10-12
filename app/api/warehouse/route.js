@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
     try {
 
-        const { title, location, type, description } = await request.json();
-        const warehouse = await db.warehouse.create({
+        const { title, location, type, description, } = await request.json();
+        const warehouse = await db.Warehouse.create({
             data: {
                 title: title,
                 location: location,
@@ -26,7 +26,7 @@ export async function POST(request) {
 }
 export async function GET(request) {
     try {
-        const warehouse = await db.warehouse.findMany({
+        const warehouse = await db.Warehouse.findMany({
             orderBy: {
                 createdAt: 'desc' //latest Warehouse
             },
