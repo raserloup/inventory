@@ -1,36 +1,15 @@
-import CreateItemForm from "@/components/dashboard/CreateItemForm";
-import FormHeader from "@/components/dashboard/FormHeader";
-import { getData } from "@/lib/getData";
+import React from "react";
 
-export default async function NewItem() {
-  //sequential Fetching => waterfall step by step
-  const CategoriesData = getData(`catagories`);
-  //console.log(CategoriesData);
-  const unitsData = getData(`units`);
-  const brandsData = getData(`brands`);
-  const warehousesData = getData(`warehouse`);
-  const suppliersData = getData(`suppliers`);
-  //console.log(suppliersData);
-  //parallel Fetching=>more faster so use that
-  const [Categories, units, brands, warehouses, suppliers] = await Promise.all([
-    CategoriesData,
-    unitsData,
-    brandsData,
-    warehousesData,
-    suppliersData,
-  ]);
+import { getData } from "@/lib/getData";
+import NewItem from "@/components/dashboard/NewItem";
+
+export default async function Page() {
+  const data = {};
+
   return (
     <div>
-      {/*Header */}
-      <FormHeader title="New Item" href="/dashboard/inventory/items" />
-      {/*Form */}
-      <CreateItemForm
-        Categories={Categories}
-        suppliers={suppliers}
-        warehouses={warehouses}
-        brands={brands}
-        units={units}
-      />
+      <h2>New form</h2>
+      <NewItem initialDataById={data} isUpdate={false} />
     </div>
   );
 }

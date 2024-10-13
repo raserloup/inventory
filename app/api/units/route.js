@@ -38,3 +38,27 @@ export async function GET(request) {
         }, { status: 500 })
     }
 }
+export async function DELETE(request) {
+    //here we use NEXT URL to search params
+    try {
+        const id = request.nextUrl.searchParams.get("id")
+        const deletedUnit = await db.unit.delete({
+            where: {
+                id
+            }
+        })
+        console.log(deletedUnit)
+        return NextResponse.json(deletedUnit)
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json(
+            {
+                error,
+                message: "Failed to delete Unit",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}

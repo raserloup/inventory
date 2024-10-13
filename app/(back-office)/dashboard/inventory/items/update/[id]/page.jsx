@@ -1,12 +1,12 @@
 import React from "react";
 
 import { getData } from "@/lib/getData";
-
-import NewItem from "../../new/page";
+import NewItem from "@/components/dashboard/NewItem";
 
 export default async function Update({ params: { id } }) {
   const data = await getData(`items/${id}`); //This item/update/id
   console.log(data);
+
   return (
     <div>
       <h2>update form</h2>

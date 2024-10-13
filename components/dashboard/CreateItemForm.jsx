@@ -5,7 +5,8 @@ import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextAreaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
-import { makePOSTRequest } from "@/lib/apiRequest";
+import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 
 import { React, useState } from "react";
 
@@ -17,21 +18,37 @@ export default function CreateItemForm({
   units,
   suppliers,
   brands,
+  initialDataById = {},
+  isUpdate = false,
 }) {
-  const [imageUrl, setImageUrl] = useState("");
-
+  const [imageUrl, setImageUrl] = useState(initialDataById.imageUrl);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: initialDataById });
   const [loading, setLoading] = useState(false);
+  function redirect() {
+    router.push("/dashboard/inventory/items");
+  }
   async function onSubmit(data) {
     data.imageUrl = imageUrl; //(if the image uploadthing worked you this)
     console.log(data);
-    makePOSTRequest(setLoading, "api/items", data, "Items", reset);
-    setImageUrl("");
+    if (isUpdate) {
+      makePUTRequest(
+        setLoading,
+        `api/items/${initialDataById.id}`,
+        data,
+        "Item",
+        redirect,
+        reset
+      );
+    } else {
+      makePOSTRequest(setLoading, "api/items", data, "Items", reset);
+      setImageUrl("");
+    }
   }
   return (
     <form
@@ -197,7 +214,11 @@ export default function CreateItemForm({
           endpoint="imageUploader"
         />
       </div>
-      <SubmitButton isloading={loading} title="Item" imageUrl="imageUrl" />
+      <SubmitButton
+        isloading={loading}
+        title={isUpdate ? "Updated Item" : "New Item"}
+        //  imageUrl="imageUrl"
+      />
     </form>
   );
 }

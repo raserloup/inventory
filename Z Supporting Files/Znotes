@@ -97,3 +97,8 @@ category: true, //Returns all fields for all categories
 }
 });
 return NextResponse.json(items);
+
+---For Alert am using sweetalert2 --
+npm install sweetalert2  
+See the documentation for usage and INTEGRATION WITH react
+---For my Page Responsiveness i have used an extension of chrome called Responsive Viewer install it and check

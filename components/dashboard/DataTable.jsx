@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Deletebtn from "./Deletebtn";
 
 export default function DataTable({ data = [], columns = [], resourceTitle }) {
   {
@@ -48,13 +49,9 @@ export default function DataTable({ data = [], columns = [], resourceTitle }) {
                     <Pencil className="w-4 h-4" />
                     {/*<span>Edit</span>*/}
                   </Link>
-                  <button
-                    className="font-medium text-red-600 
-                  dark:text-red-500 flex items-center space-x-1"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    {/*<span>Delete</span>*/}
-                  </button>
+                  {/*Here i make the delete btn as component 
+                   b/c it's an event handler so that it has to use "use Client" */}
+                  <Deletebtn id={item.id} endpoint={resourceTitle} />
                 </td>
               </tr>
             );

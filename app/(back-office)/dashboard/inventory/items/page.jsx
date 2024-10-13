@@ -4,25 +4,24 @@ import DataTable from "@/components/dashboard/DataTable";
 
 export default async function Items() {
   const items = await getData("items");
-  console.log(items);
-  const Item = items.map((obj) => {
-    return {
-      id: obj.id,
-      title: obj.title,
-      description: obj.description,
-      sku: obj.sku,
-      barcode: obj.barcode,
-      quantity: obj.quantity,
-      sellingPrice: obj.sellingPrice,
-      buyingPrice: obj.buyingPrice,
-      reOrderPoint: obj.reOrderPoint,
-      imageUrl: obj.imageUrl,
-      weight: obj.weight,
-      dimensions: obj.dimensions,
-      taxRate: obj.taxRate,
-      notes: obj.notes,
-    };
-  });
+  // const Item = items.map((obj) => {
+  //   return {
+  //     id: obj.id,
+  //     title: obj.title,
+  //     description: obj.description,
+  //     sku: obj.sku,
+  //     barcode: obj.barcode,
+  //     quantity: obj.quantity,
+  //     // sellingPrice: obj.sellingPrice,
+  //     // buyingPrice: obj.buyingPrice,
+  //     // reOrderPoint: obj.reOrderPoint,
+  //     // imageUrl: obj.imageUrl,
+  //     // weight: obj.weight,
+  //     // dimensions: obj.dimensions,
+  //     // taxRate: obj.taxRate,
+  //     // notes: obj.notes,
+  //   };
+  // });
 
   const columns = [
     "title",
@@ -30,14 +29,14 @@ export default async function Items() {
     "sku",
     "barcode",
     "quantity",
-    "sellingPrice",
-    "buyingPrice",
-    "reOrderPoint",
-    "imageUrl",
-    "weight",
-    "dimensions",
-    "taxRate",
-    "notes",
+    // "sellingPrice",
+    // "buyingPrice",
+    // "reOrderPoint",
+    // "imageUrl",
+    // "weight",
+    // "dimensions",
+    // "taxRate",
+    // "notes",
   ];
   return (
     <div>
@@ -46,7 +45,7 @@ export default async function Items() {
       {/*Table */}
       <div className="my-4 p-8">
         {/*<DataTable data={items} columns={columns} />*/}
-        <DataTable data={Item} columns={columns} resourceTitle="items" />
+        <DataTable data={items} columns={columns} resourceTitle="items" />
       </div>
     </div>
   );
