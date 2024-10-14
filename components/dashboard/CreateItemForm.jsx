@@ -103,7 +103,7 @@ export default function CreateItemForm({
         />
         <TextInput
           label="Item Quantity"
-          name="qty"
+          name="quantity"
           register={register}
           errors={errors}
           className="w-full"
@@ -157,13 +157,13 @@ export default function CreateItemForm({
           className="w-full"
           placeholder=" Provide the Re-Order Point"
         />
-        <SelectInput
+        {/* <SelectInput
           name="warehouseId"
           label="Select the Item Warehouse"
           register={register}
           className="w-full"
           options={warehouses}
-        />
+        /> */}
         <TextInput
           label="Item Weight in kgs"
           name="weight"

@@ -11,7 +11,7 @@ export async function POST(request) {
                 categoryId: itemData.categoryId,
                 sku: itemData.sku,
                 barcode: itemData.barcode,
-                quantity: parseInt(itemData.qty),
+                quantity: parseInt(itemData.quantity),
                 unitId: itemData.unitId,
                 brandId: itemData.brandId,
                 supplierId: itemData.supplierId,
@@ -44,9 +44,12 @@ export async function GET(request) {
                 createdAt: 'desc' //latest items
             },
             // findMAny(include or select or... have much options so go and check the prisma documentation 
-            include: {
+            include: { //check a nested columns logic 
                 category: true, //Returns all fields for all categories
-                // suppliers: true//Returns all suppliers fields
+                supplier: true,//it has to match with the schema you put on model item 
+                unit: true,//Returns all unit fields
+                warehouse: true,//Returns all suppliers fields
+                brand: true,//Returns all unit fields
             }
         });
         return NextResponse.json(items);

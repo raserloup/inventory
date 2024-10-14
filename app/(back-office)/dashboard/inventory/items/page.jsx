@@ -9,9 +9,10 @@ export default async function Items() {
   //     id: obj.id,
   //     title: obj.title,
   //     description: obj.description,
-  //     sku: obj.sku,
-  //     barcode: obj.barcode,
   //     quantity: obj.quantity,
+  //     category: obj.category.title,
+  //     warehouse: obj.warehouse.title,
+
   //     // sellingPrice: obj.sellingPrice,
   //     // buyingPrice: obj.buyingPrice,
   //     // reOrderPoint: obj.reOrderPoint,
@@ -24,11 +25,17 @@ export default async function Items() {
   // });
 
   const columns = [
+    "imageUrl",
     "title",
-    "description",
-    "sku",
-    "barcode",
+    "sellingPrice",
+    "category.title", //make sure you make include is true in api item route
+    // "brand.title", //make sure you make include is true in api item route
+    // "unit.title", //make sure you make include is true in api item route
+    // "supplier.title", //make sure you make include is true in api item route
+    // // "barcode",
     "quantity",
+    // "category.title", //make sure you make include is true in api item route
+    // "warehouse.title", //make sure you make include is true in api item route
     // "sellingPrice",
     // "buyingPrice",
     // "reOrderPoint",

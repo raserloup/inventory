@@ -24,13 +24,21 @@ export default async function Adjustments() {
         <h2 className="border bottom-2  bg-slate-50 border-cyan-500 flex justify-between items-center py-4 font-semibold">
           Stock Increment Adjustment
         </h2>
-        <DataTable data={addAdjustments} columns={addcolumns} />
+        <DataTable
+          data={addAdjustments}
+          columns={addcolumns}
+          resourceTitle="adjustments/add"
+        />
       </div>
       <div className="my-4 p-8">
         <h2 className="border bottom-2 bg-slate-50 border-cyan-500 flex justify-between items-center py-4 font-semibold">
           Stock Transfer Adjustment
         </h2>
-        <DataTable data={transferAdjustments} columns={transfercolumns} />
+        <DataTable
+          data={transferAdjustments}
+          columns={transfercolumns}
+          resourceTitle="adjustments/transfer"
+        />
       </div>
     </div>
   );

@@ -86,7 +86,7 @@ export default function Deletebtn({ id, endpoint }) {
     dark:text-red-500 flex items-center space-x-1"
         >
           <Trash2 className="w-4 h-4" />
-          {/*<span>Delete</span>*/}
+          <span>Delete</span>
         </button>
       )}
     </>
