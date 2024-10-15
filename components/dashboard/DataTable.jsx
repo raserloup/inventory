@@ -64,13 +64,19 @@ export default function DataTable({ data = [], columns = [], resourceTitle }) {
                   ))}
 
                   <td className="px-6 py-4 text-right flex items-center space-x-4">
-                    <Link
-                      href={`/dashboard/inventory/${resourceTitle}/update/${item.id}`}
-                      className="font-medium text-blue-600 dark:text-blue-500 flex items-center space-x-1"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      <span>Edit</span>
-                    </Link>
+                    {/*Here for add and transfer adjustments i make the Edit button not visible */}
+                    {resourceTitle.includes("adjustments") ? (
+                      ""
+                    ) : (
+                      <Link
+                        href={`/dashboard/inventory/${resourceTitle}/update/${item.id}`}
+                        className="font-medium text-blue-600 dark:text-blue-500 flex items-center space-x-1"
+                      >
+                        <Pencil className="w-4 h-4" />
+                        <span>Edit</span>
+                      </Link>
+                    )}
+
                     {/*Here i make the delete btn as component 
                    b/c it's an event handler so that it has to use "use Client" */}
                     <Deletebtn id={item.id} endpoint={resourceTitle} />

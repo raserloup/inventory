@@ -45,7 +45,7 @@ export default function TransferInventoryForm({ items, warehouse }) {
           register={register}
           errors={errors}
           // defaultValue="We will you this later since the reference number is a default value"
-          className="w-full"
+          // className="w-full"
           placeholder="Type the reference number"
         />
         <SelectInput
@@ -56,6 +56,7 @@ export default function TransferInventoryForm({ items, warehouse }) {
           options={items}
         />
         <TextInput
+          className="w-full"
           type="number"
           label="Enter Quantity of Stock to transfer"
           name="transferStockQty"

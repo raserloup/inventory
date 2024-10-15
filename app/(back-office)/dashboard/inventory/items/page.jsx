@@ -35,7 +35,7 @@ export default async function Items() {
     // // "barcode",
     "quantity",
     // "category.title", //make sure you make include is true in api item route
-    // "warehouse.title", //make sure you make include is true in api item route
+    "warehouse.title", //make sure you make include is true in api item route
     // "sellingPrice",
     // "buyingPrice",
     // "reOrderPoint",

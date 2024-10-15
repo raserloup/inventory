@@ -8,7 +8,6 @@ export default async function Page() {
 
   return (
     <div>
-      <h2>New form</h2>
       <NewItem initialDataById={data} isUpdate={false} />
     </div>
   );

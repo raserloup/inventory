@@ -1,3 +1,4 @@
+"use client";
 import {
   AlignJustify,
   Bell,
@@ -11,8 +12,22 @@ import {
 import React from "react";
 import SearchInput from "./SearchInput";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Header({ setShowSidebar }) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  if (status === "loading") {
+    return <p>loading User...</p>; //should have good component
+  }
+  if (status === "unauthenticated") {
+    router.push("/login");
+  }
+  const username = session?.user?.name ?? "";
+  {
+    /*you can split the name name as below paused here 0:40:22 */
+  }
   function handleClick() {
     console.log("Btn Clicked");
   }
@@ -80,7 +95,7 @@ export default function Header({ setShowSidebar }) {
         {/* */}
         <div className="flex gap-3">
           <button className="flex items-center">
-            <span>Er.Studio</span>
+            <span>{username}</span>
             <ChevronDown className="w-4 h-4" />
           </button>
 

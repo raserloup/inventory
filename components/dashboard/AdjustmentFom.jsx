@@ -6,7 +6,7 @@ import { useState } from "react";
 import TransferInventoryForm from "./TransferInventoryForm";
 import AddInventoryForm from "./AddInventoryForm";
 
-export default function AdjustmentForm({ items, warehouse }) {
+export default function AdjustmentForm({ items, warehouse, suppliers }) {
   const tabs = [
     {
       title: "Add Stock",
@@ -64,7 +64,11 @@ export default function AdjustmentForm({ items, warehouse }) {
       </div>
       {/*Form */}
       {activeForm === "add" ? (
-        <AddInventoryForm items={items} warehouse={warehouse} />
+        <AddInventoryForm
+          items={items}
+          suppliers={suppliers}
+          warehouse={warehouse}
+        />
       ) : (
         <TransferInventoryForm items={items} warehouse={warehouse} />
       )}

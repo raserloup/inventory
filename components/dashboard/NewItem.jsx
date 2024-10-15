@@ -37,7 +37,7 @@ export default async function NewItem({
         brands={brands}
         units={units}
         initialDataById={initialDataById}
-        isUpdate={true} //change it isUpdate if issue appear
+        isUpdate={isUpdate} //change it isUpdate if issue appear
       />
     </div>
   );

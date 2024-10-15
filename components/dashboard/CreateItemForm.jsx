@@ -61,13 +61,13 @@ export default function CreateItemForm({
         className="grid gap-4 sm:grid-cols-2 
         sm:gap-6"
       >
-        <SelectInput
+        {/* <SelectInput
           name="warehouseId"
           label="Select Warehouse Title"
           register={register}
           className="w-full"
           options={warehouses}
-        />
+        /> */}
 
         <TextInput
           label="Item Title"
@@ -157,13 +157,13 @@ export default function CreateItemForm({
           className="w-full"
           placeholder=" Provide the Re-Order Point"
         />
-        {/* <SelectInput
+        <SelectInput
           name="warehouseId"
           label="Select the Item Warehouse"
           register={register}
           className="w-full"
           options={warehouses}
-        /> */}
+        />
         <TextInput
           label="Item Weight in kgs"
           name="weight"

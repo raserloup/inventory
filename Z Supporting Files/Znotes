@@ -1,4 +1,7 @@
-My Project Details
+## **My Project Details**
+
+## **Dashboard and DataBase INtegrations**
+
 --Discord.com for creating my own server
 
 --i use sass for tailwind for styling (npm i sass)
@@ -103,3 +106,39 @@ return NextResponse.json(items);
 npm install sweetalert2  
 See the documentation for usage and INTEGRATION WITH react
 ---For my Page Responsiveness i have used an extension of chrome called Responsive Viewer install it and check
+
+## **Credentials Authentication**
+
+----------Credentials Authentication Next Auth and Next js-----------
+-on nextAuth.js (next-auth.js.org go and check on providers) there are a lot of providers but most used are
+the Credentials ,Google,Github
+**Credentials:**
+--in my project am using the Credentials Authentications
+**Create a Sessions: on every page**
+**Install Next-auth**
+--npm install next-auth
+**Create a Route Handler(app/)**
+
+1. **API Routes (pages)**
+   --In Next.js, you can define an API route that will catch all requests that begin with a certain path. Conveniently, this is called Catch all API routes.
+   When you define a /pages/api/auth/[...nextauth] JS/TS file, you instruct NextAuth.js that every API request beginning with /api/auth/\* should be handled by the code written in the [...nextauth] file.
+
+   **...example create a file as below**
+   /pages/api/auth/[...nextauth].ts
+   import NextAuth from "next-auth"  
+   export default NextAuth({
+   ...
+   })
+
+2. **Route Handlers (app/)**
+   Next.js 13.2 introduced Route Handlers, the preferred way to handle REST-like requests in App Router (app/).
+   You can initialize NextAuth.js with a Route Handler too, very similar to API Routes.
+   ...so on my api i will create a with
+   /app/api/auth/[...nextauth]/route.ts and paste the below
+   import NextAuth from "next-auth"
+   const handler = NextAuth
+   ({...})
+   export { handler as GET, handler as POST } 3. **use bcrypt**
+   npm install bcryptjs
+3. **here am using prisma adapter in authOptions**
+   npm i @auth/prisma-adapter --if monogo us mongo adapter

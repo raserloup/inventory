@@ -10,8 +10,8 @@ export default async function Adjustments() {
     addAdjustmentsData,
     transferAdjustmentsData,
   ]);
-  const addcolumns = ["referenceNumber", "addStockQty"];
-  const transfercolumns = ["referenceNumber", "transferStockQty"];
+  const addcolumns = ["referenceNumber", "addStockQty", "createdAt"];
+  const transfercolumns = ["referenceNumber", "transferStockQty", "createdAt"];
   return (
     <div>
       {/*Header */}

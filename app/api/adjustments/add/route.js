@@ -7,16 +7,17 @@ export async function POST(request) {
             receivingWarehouseId,
             notes,
             referenceNumber,
-            itemId
+            itemId,
+            supplierId,
         } = await request.json();
-        // //# While Adding a stock so 1st get the item 
+        // //# 1st get the item to fetch value of item quantity to add
         const ItemToUpdate = await db.item.findUnique({
             where: {
                 id: itemId,
             },
 
         })
-        // //# Get the Current Item Quantity
+        // //# Get the Current Item Quantity value and add to the existing value
         const currentItemQty = ItemToUpdate.quantity
         const newQty = parseInt(currentItemQty) + parseInt(addStockQty)
 
@@ -29,22 +30,41 @@ export async function POST(request) {
                 quantity: newQty,
             },
         });
+        //#since stock changed here 1st Get the warehouse(fetch)
+        const warehouse = await db.warehouse.findUnique({
+            where: {
+                id: receivingWarehouseId
+            }
+        })
+        //#2nd current Stock of the warehouse
+        const currentWarehouseStock = warehouse.stockQty;
+        const NewStockQty = parseInt(currentWarehouseStock) + parseInt(addStockQty)
+        //#3rd Update the Stock in the warehouse
+        const updatedWarehouse = await db.warehouse.update({
+            where: {
+                id: receivingWarehouseId,
+            },
+            data: {
+                stockQty: NewStockQty
+            }
+        })
 
-        console.log(updatedItem)
-        // const adjustment = await db.addStockAdjustment.create({
-        //     data: {
-        //         itemId,
-        //         referenceNumber,
-        //         addStockQty: parseInt(addStockQty),
-        //         receivingWarehouseId,
-        //         notes,
-        //     }
-        // });
-        // console.log(adjustment)
+        //  console.log(updatedItem)
+        const adjustment = await db.addStockAdjustment.create({
+            data: {
+                itemId,
+                referenceNumber,
+                addStockQty: parseInt(addStockQty),
+                receivingWarehouseId,
+                notes,
+                supplierId,
+            }
+        });
+        console.log(adjustment)
 
+        {/* paused in 1:02:44 */ }
 
-
-        //After adding it should affect the warehouse data too
+        //  After adding it should affect the warehouse data too
 
 
         return NextResponse.json(adjustment)
@@ -84,7 +104,7 @@ export async function DELETE(request) {
                 id
             }
         })
-        console.log(deletedAdjustment)
+        //console.log(deletedAdjustment)
         return NextResponse.json(deletedAdjustment)
     } catch (error) {
         console.log(error)

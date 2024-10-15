@@ -10,7 +10,7 @@ import { React, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function AddInventoryForm({ items, warehouse }) {
+export default function AddInventoryForm({ items, warehouse, suppliers }) {
   const {
     register,
     handleSubmit,
@@ -46,7 +46,7 @@ export default function AddInventoryForm({ items, warehouse }) {
           register={register}
           errors={errors}
           //defaultValue="refeeff"
-          className="w-full"
+          // className="w-full"
           placeholder="Type the reference number"
         />
         <SelectInput
@@ -55,6 +55,13 @@ export default function AddInventoryForm({ items, warehouse }) {
           name="itemId"
           label="Select the Item"
           options={items}
+        />
+        <SelectInput
+          register={register}
+          className="w-full"
+          name="supplierId"
+          label="Select the supplier"
+          options={suppliers}
         />
         <TextInput
           type="number"
