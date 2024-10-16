@@ -1,8 +1,24 @@
 "use client";
-
+import LoadingSpinner from "@/components/auth/LoadingSpinner";
 import LoginForm from "@/components/auth/LoginForm";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Login() {
+  // Restrict access to the login page if user is logged in
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard/home/overview");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return <LoadingSpinner />;
+  }
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

@@ -12,6 +12,7 @@
     "@auth/prisma-adapter": "^2.7.0",
     "@prisma/client": "^5.20.0",
     "@radix-ui/react-collapsible": "^1.1.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@uploadthing/react": "^7.0.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

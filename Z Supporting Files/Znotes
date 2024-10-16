@@ -25,6 +25,12 @@ git push -u origin main /}
 //
 //
 //
+**For Creating a dropdown-menu component**
+--am using shadcn-ui to install
+npx shadcn@latest add dropdown-menu
+
+npm i @auth/prisma-adapter --if monogo us mongo adapter
+
 --for collapsible components am using shadcn component that are collapsible i used
 npx shadcn@latest init
 For collapsible components
