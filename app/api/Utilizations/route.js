@@ -3,43 +3,42 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
     try {
+        const { title, idelqty, opqty, downqty } = await request.json();
 
-        const { title, location, type, description, } = await request.json();
-        const warehouse = await db.Warehouse.create({
+        // for prisma use
+        const Utilization = await db.Utilization.create({
             data: {
                 title: title,
-                location: location,
-                warehouseType: type,
-                description: description,
+                idelqty: idelqty,
+                opqty: opqty,
+                downqty: downqty
             }
         });
-        console.log(warehouse)
-        return NextResponse.json(warehouse)
+        console.log(Utilization)
+        return NextResponse.json(Utilization)
+
 
     } catch (error) {
         console.log(error)
         return NextResponse.json({
             error,
-            message: "Failed to create an Warehouse"
+            message: "Failed to create a Utilization"
         }, { status: 500 })
     }
 }
 export async function GET(request) {
     try {
-        const warehouse = await db.Warehouse.findMany({
+        const Utilization = await db.Utilization.findMany({
             orderBy: {
                 createdAt: 'desc' //latest Warehouse
             },
-            include: {
-                items: true
-            }
         });
-        return NextResponse.json(warehouse);
+        return NextResponse.json(Utilization);
     } catch (error) {
         console.log(error)
         return NextResponse.json({
             error,
-            message: "Failed to Fetch the Warehouse"
+            message: "Failed to Fetch the Utilization"
         }, { status: 500 })
     }
 }
@@ -47,22 +46,19 @@ export async function DELETE(request) {
     //here we use NEXT URL to search params
     try {
         const id = request.nextUrl.searchParams.get("id")
-        const deletedWarehouse = await db.Warehouse.delete({
+        const deleteUtilization = await db.Utilization.delete({
             where: {
                 id
-            },
-            include: {
-                item: true
             }
         })
-        console.log(deletedWarehouse)
-        return NextResponse.json(deletedWarehouse)
+        console.log(deleteUtilization)
+        return NextResponse.json(deleteUtilization)
     } catch (error) {
         console.log(error)
         return NextResponse.json(
             {
                 error,
-                message: "Failed to delete Warehouse",
+                message: "Failed to Delete Utilization",
             },
             {
                 status: 500,

@@ -26,12 +26,13 @@ import { generateInitials } from "@/lib/generateInitials";
 import LoadingSpinner from "../auth/LoadingSpinner";
 
 export default function Header({ setShowSidebar }) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      router.push(baseUrl);
     }
   }, [status, router]);
 
@@ -117,8 +118,8 @@ export default function Header({ setShowSidebar }) {
               className="w-8 h-9 rounded-full border border-slate-800"
             />
           ) : (
-            <div className="w-8 h-9 rounded-full border border-slate-800 bg-black text-white font-semibold">
-              {initials}
+            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-blue-600 rounded-full border border-slate-700">
+              <span className="font-medium text-white ">{initials}</span>
             </div>
           )}
         </button>

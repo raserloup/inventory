@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Corrected the access to environment variables
   const router = useRouter();
   const {
     register,
@@ -22,11 +23,10 @@ export default function LoginForm() {
         ...data,
         redirect: false,
       });
-
       if (loginData.ok) {
         setLoading(false);
         toast.success("Logged in Successfully");
-        router.push("/dashboard/home/overview");
+        router.push(baseUrl); // This should probably be a specific route like "/dashboard"
       } else {
         setLoading(false);
         setLoginErr(loginData.error || "Login failed");
@@ -92,6 +92,15 @@ export default function LoginForm() {
           className="font-medium text-primary-600 hover:underline dark:text-primary-500"
         >
           Sign up
+        </a>
+      </p>
+      <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+        Back to{" "}
+        <a
+          href={baseUrl}
+          className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+        >
+          Home
         </a>
       </p>
     </form>

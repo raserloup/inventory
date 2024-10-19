@@ -31,6 +31,10 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
       href: "/dashboard/inventory/catagories",
     },
     {
+      title: "Utilization",
+      href: "/dashboard/inventory/Utilizations",
+    },
+    {
       title: "Brands",
       href: "/dashboard/inventory/brands",
     },

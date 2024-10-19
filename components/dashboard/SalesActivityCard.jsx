@@ -13,7 +13,7 @@ export default function SalesActivityCard({ item }) {
                   flex-col gap-3 transition-all duration-300"
     >
       <h4 className={`font-semibold text-3xl ${item.color}`}>{item.number}</h4>
-      <small className="text-slate-500">{item.unit}</small>
+      {/* <small className="text-slate-500">{item.unit}</small> */}
       <div
         className="flex items-center 
                 space-x-2 text-slate-500"

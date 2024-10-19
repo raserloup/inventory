@@ -68,6 +68,7 @@ export async function GET(request) {
                 unit: true,//Returns all unit fields
                 warehouse: true,//Returns all suppliers fields
                 brand: true,//Returns all unit fields
+
             }
         });
         return NextResponse.json(items);

@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Login() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   // Restrict access to the login page if user is logged in
   const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard/home/overview");
+      router.push(baseUrl);
     }
   }, [status, router]);
 

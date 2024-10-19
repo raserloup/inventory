@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function RegisterForm() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Corrected the access to environment variables
   const router = useRouter();
   const {
     register,
@@ -123,6 +124,15 @@ export default function RegisterForm() {
           className="font-medium text-primary-600 hover:underline dark:text-primary-500"
         >
           Login
+        </a>
+      </p>
+      <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+        Back to{" "}
+        <a
+          href={baseUrl}
+          className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+        >
+          Home
         </a>
       </p>
     </form>

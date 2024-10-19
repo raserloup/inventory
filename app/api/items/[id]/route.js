@@ -13,6 +13,7 @@ export async function GET(request, { params: { id } }) {
                 unit: true,//Returns single unit by id which is related with item fields
                 warehouse: true,////Returns single warehouse by id which is related with item fields
                 brand: true,//Returns single brand by id which is related with item fields
+
             }
         });
         return NextResponse.json(item);

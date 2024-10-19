@@ -15,7 +15,7 @@ export default async function Categories() {
   console.log(Catagories);
   const columns = ["title", "description"];
   return (
-    <div>
+    <>
       {/*Header */}
       <FixedHeader
         title="catagories"
@@ -29,6 +29,6 @@ export default async function Categories() {
           resourceTitle="catagories"
         />
       </div>
-    </div>
+    </>
   );
 }

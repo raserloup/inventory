@@ -148,3 +148,21 @@ the Credentials ,Google,Github
    npm install bcryptjs
 3. **here am using prisma adapter in authOptions**
    npm i @auth/prisma-adapter --if monogo us mongo adapter
+
+## **Necessary things should be done for deploying **
+
+--while deploying On Vercel
+1.include the {"postinstall": "prisma generate"} under the scripts in package.json
+"scripts": {
+"dev": "next dev",
+"build": "next build",
+"start": "next start",
+"lint": "next lint",
+"postinstall": "prisma generate"
+},
+2.make sure you put your environmental variable file in the gitignore file like the below
+
+# local env files
+
+.env\*.local
+.env
