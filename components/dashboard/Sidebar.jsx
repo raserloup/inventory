@@ -19,6 +19,10 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
   //console.log(showSidebar);
   const inventoryLinks = [
     {
+      title: "DailyStaus",
+      href: "/dashboard/inventory/dailystatus",
+    },
+    {
       title: "All Items",
       href: "/dashboard/inventory/",
     },
@@ -170,6 +174,7 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
           className="bg-slate-950 
         flex space-x-2 
         items-center justify-center py-3 px-2 "
+          onClick={() => setShowSidebar(!showSidebar)}
         >
           <ChevronLeft />
         </button>

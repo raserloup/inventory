@@ -142,11 +142,12 @@ model User {
 }
 
 model Utilization {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  idelqty String
-  opqty   String
-  downqty String
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  platenumber String
+  idelqty     String
+  opqty       String
+  downqty     String
+  refnumber   String
 
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt

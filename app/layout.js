@@ -2,7 +2,9 @@ import localFont from "next/font/local";
 import "../styles/main.scss";
 import { Toaster } from "react-hot-toast";
 import AuthProvider from "@/context/AuthProvider";
-import Navbar from "@/components/Navbar";
+
+import { NextUIProvider } from "@nextui-org/react";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,15 +28,17 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/*Wrap use the authOption user authentication */}
-        <AuthProvider>
-          <Toaster
-            position="top-center"
-            reverseOrder={false}
-          />
-          {children}
+        <NextUIProvider>
+          {/*Wrap use the authOption user authentication */}
+          <AuthProvider>
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+            />
+            {children}
 
-        </AuthProvider>
+          </AuthProvider>
+        </NextUIProvider>
       </body>
     </html>
   );

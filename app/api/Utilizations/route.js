@@ -3,15 +3,16 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
     try {
-        const { title, idelqty, opqty, downqty } = await request.json();
+        const { platenumber, idelqty, opqty, downqty, refnumber } = await request.json();
 
         // for prisma use
         const Utilization = await db.Utilization.create({
             data: {
-                title: title,
+                platenumber: platenumber,
                 idelqty: idelqty,
                 opqty: opqty,
-                downqty: downqty
+                downqty: downqty,
+                refnumber: refnumber
             }
         });
         console.log(Utilization)
