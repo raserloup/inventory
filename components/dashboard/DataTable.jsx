@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import Link from "next/link";
 import Deletebtn from "./Deletebtn";
 

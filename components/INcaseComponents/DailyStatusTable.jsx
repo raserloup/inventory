@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import DataTableInline from "@/components/dashboard/DataTableInline";
+import DataTableInline from "@/components/INcaseComponents/DataTableInline";
 import {
   makePOSTRequest,
   makePUTRequest,
@@ -8,7 +8,7 @@ import {
 } from "@/lib/apiRequest";
 import { getData } from "@/lib/getData";
 
-export default function UtilizationTable({
+export default function DailyStatusTable({
   data = [],
   columns = [],
   resourceTitle,
@@ -17,7 +17,7 @@ export default function UtilizationTable({
   const [rowData, setRowData] = useState(data);
 
   const fetchData = async () => {
-    const data = await getData("Utilizations");
+    const data = await getData("DailyStatus");
     setRowData(data);
   };
 
@@ -30,16 +30,16 @@ export default function UtilizationTable({
       if (isUpdate) {
         await makePUTRequest(
           setLoading,
-          `api/Utilizations/${updatedItem.id}`,
+          `api/DailyStatus/${updatedItem.id}`,
           updatedItem,
-          "Utilizations"
+          "DailyStatus"
         );
       } else {
         await makePOSTRequest(
           setLoading,
-          "api/Utilizations",
+          "api/DailyStatus",
           updatedItem,
-          "Utilizations"
+          "DailyStatus"
         );
       }
       await fetchData(); // Refresh data after save
@@ -52,8 +52,8 @@ export default function UtilizationTable({
     try {
       await makeDELETERequest(
         setLoading,
-        `api/Utilizations?id=${id}`,
-        "Utilizations",
+        `api/DailyStatus?id=${id}`,
+        "DailyStatus",
         () => {}
       );
       await fetchData(); // Refresh data after delete

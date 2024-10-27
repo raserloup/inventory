@@ -3,17 +3,20 @@ import { NextResponse } from "next/server";
 
 export async function GET(request, { params: { id } }) {
     try {
-        const Utilization = await db.Utilization.findUnique({
+        const dailyStatus = await db.DailyStatus.findUnique({
             where: {
-                id //to fetch single Utilization by id on latest version Find one is changed to FindUnique
+                id //to fetch single DailyStatus by id on latest version Find one is changed to FindUnique
             },
+            include: {
+                category: true, //Returns all fields for all categories
+            }
         });
-        return NextResponse.json(Utilization);
+        return NextResponse.json(dailyStatus);
     } catch (error) {
         console.log(error)
         return NextResponse.json({
             error,
-            message: `Failed to Fetch Utilization by this ${id}`
+            message: `Failed to Fetch DailyStatus by this ${id}`
         }, { status: 500 })
     }
 }
@@ -22,28 +25,28 @@ export async function PUT(request, { params: { id } }) {
     const { title, idelqty,
         opqty,
         downqty,
-        refnumber, platenumber } = await request.json()
+        refnumber, categoryId: categoryId, ownership, remark } = await request.json()
     try {
-        const Utilization = await db.Utilization.update({
+        const DailyStatus = await db.DailyStatus.update({
             where: {
-                id //to updating Utilization data by id 
+                id //to updating DailyStatus data by id 
             },
             data: {
                 title,
-                platenumber,
+                categoryId: categoryId,
                 idelqty,
                 opqty,
                 downqty,
-                refnumber
+                refnumber, ownership, remark,
             }
         });
-        console.log(Utilization)
-        return NextResponse.json(Utilization);
+        console.log(DailyStatus)
+        return NextResponse.json(DailyStatus);
     } catch (error) {
         console.log(error)
         return NextResponse.json({
             error,
-            message: `Failed to update the Utilization by this ${id}`
+            message: `Failed to update the DailyStatus by this ${id}`
         }, { status: 500 })
     }
 }
@@ -51,19 +54,19 @@ export async function PUT(request, { params: { id } }) {
 //     //here we use NEXT URL to search params
 //     try {
 //         const id = request.nextUrl.searchParams.get("id")
-//         const Utilization = await db.Utilization.delete({
+//         const DailyStatus = await db.DailyStatus.delete({
 //             where: {
 //                 id
 //             }
 //         })
-//         //console.log(Utilization)
-//         return NextResponse.json(Utilization)
+//         //console.log(DailyStatus)
+//         return NextResponse.json(DailyStatus)
 //     } catch (error) {
 //         console.log(error)
 //         return NextResponse.json(
 //             {
 //                 error,
-//                 message: "Failed to delete Utilization",
+//                 message: "Failed to delete DailyStatus",
 //             },
 //             {
 //                 status: 500,
@@ -74,19 +77,19 @@ export async function PUT(request, { params: { id } }) {
 export async function DELETE(request) {
     try {
         const id = request.nextUrl.searchParams.get("id");
-        const Utilization = await db.Utilization.delete({
+        const dailyStatus = await db.DailyStatus.delete({
             where: {
                 id: id // Ensure the id is correctly used
             }
         });
 
-        return NextResponse.json(Utilization);
+        return NextResponse.json(dailyStatus);
     } catch (error) {
         console.log(error);
         return NextResponse.json(
             {
                 error,
-                message: "Failed to delete Utilization",
+                message: "Failed to delete DailyStatus",
             },
             {
                 status: 500,

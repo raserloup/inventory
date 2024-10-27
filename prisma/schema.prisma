@@ -48,12 +48,13 @@ model Item {
 }
 
 model Category {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String?
   items       Item[]
-  createdAt   DateTime @default(now())
-  updateAt    DateTime @updatedAt
+  dailyStatus DailyStatus[]
+  createdAt   DateTime      @default(now())
+  updateAt    DateTime      @updatedAt
 }
 
 model Unit {
@@ -141,13 +142,29 @@ model User {
   updateAt       DateTime  @updatedAt
 }
 
-model Utilization {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  platenumber String
-  idelqty     String
-  opqty       String
-  downqty     String
-  refnumber   String
+// model Utilization {
+//   id            String @id @default(auto()) @map("_id") @db.ObjectId
+//   equipmenttype String
+//   ownership     String
+//   idelqty       String
+//   opqty         String
+//   downqty       String
+//   refnumber     String
+//   remark        String
+
+//   createdAt DateTime @default(now())
+//   updateAt  DateTime @updatedAt
+// }
+model DailyStatus {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String   @db.ObjectId
+  ownership  String
+  idelqty    String
+  opqty      String
+  downqty    String
+  refnumber  String
+  remark     String
 
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt

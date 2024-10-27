@@ -8,6 +8,7 @@ import {
   Home,
   ShoppingBag,
   ShoppingCart,
+  Tractor,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,10 +19,6 @@ import SidebarDropdownLink from "./SidebarDropdownLink";
 export default function Sidebar({ showSidebar, setShowSidebar }) {
   //console.log(showSidebar);
   const inventoryLinks = [
-    {
-      title: "DailyStaus",
-      href: "/dashboard/inventory/dailystatus",
-    },
     {
       title: "All Items",
       href: "/dashboard/inventory/",
@@ -34,10 +31,7 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
       title: "Categories",
       href: "/dashboard/inventory/catagories",
     },
-    {
-      title: "Utilization",
-      href: "/dashboard/inventory/Utilizations",
-    },
+
     {
       title: "Brands",
       href: "/dashboard/inventory/brands",
@@ -97,6 +91,16 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
       href: "#",
     },
   ];
+  const Equipment = [
+    {
+      title: "DailyStatus",
+      href: "/dashboard/equipments/DailyStatus",
+    },
+    {
+      title: "DailyStaus",
+      href: "/dashboard/equipments/dailystatus",
+    },
+  ];
   return (
     <div
       className={`${
@@ -142,6 +146,12 @@ export default function Sidebar({ showSidebar, setShowSidebar }) {
             title="Inventory"
             icon={BaggageClaim}
             setShowSidebar={setShowSidebar}
+          />
+          {/*  Collapsible Sales*/}
+          <SidebarDropdownLink
+            items={Equipment}
+            title="Equipments"
+            icon={Tractor}
           />
           {/*  Collapsible Sales*/}
           <SidebarDropdownLink

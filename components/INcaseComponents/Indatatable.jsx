@@ -20,16 +20,16 @@ export default function INDataTable({ data = [], columns = [], resourceName }) {
       if (NewDataToUpdate.id) {
         savedData = await makePUTRequest(
           setLoading,
-          `api/Utilizations/${NewDataToUpdate.id}`,
+          `api/DailyStatus/${NewDataToUpdate.id}`,
           NewDataToUpdate,
-          "Utilizations"
+          "DailyStatus"
         );
       } else {
         savedData = await makePOSTRequest(
           setLoading,
-          "api/Utilizations",
+          "api/DailyStatus",
           NewDataToUpdate,
-          "Utilizations"
+          "DailyStatus"
         );
       }
 

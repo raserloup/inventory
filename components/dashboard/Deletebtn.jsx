@@ -1,14 +1,16 @@
 "use client";
+
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 
-export default function Deletebtn({ id, endpoint }) {
+export default function Deletebtn({ id, endpoint, onDeleteSuccess }) {
   const [loading, setLoading] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
+
   async function handleDelete() {
     setLoading(true);
     Swal.fire({
@@ -38,6 +40,7 @@ export default function Deletebtn({ id, endpoint }) {
             icon: "success",
           });*/
           toast.success("Deleted Successfully");
+          if (onDeleteSuccess) onDeleteSuccess(); // Call fetchData in parent
         }
       } else {
         setLoading(false);
@@ -86,7 +89,7 @@ export default function Deletebtn({ id, endpoint }) {
     dark:text-red-500 flex items-center space-x-1"
         >
           <Trash2 className="w-4 h-4" />
-          <span>Delete</span>
+          {/* <span>Delete</span> */}
         </button>
       )}
     </>
