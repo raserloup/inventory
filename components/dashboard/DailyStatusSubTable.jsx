@@ -108,11 +108,13 @@ export default function DailyStatusInline({
         <div className="relative overflow-x-auto w-full  border-gray-500">
           {rowData.length > 0 ? (
             <table className="w-full text-sm text-left text-gray-600 border-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-blue-100">
+              <thead className="text-ellipsis text-gray-600 uppercase bg-orange-300">
                 <tr>
                   {columns.map((columnName, i) => (
-                    <th key={i} className="px-4 py-2 border-b border-gray-300">
-                      {columnName}
+                    <th key={i} className="px-4 py-2 border-b border-gray-300 ">
+                      {columnName === "categoryId"
+                        ? "Equipment Type"
+                        : columnName}
                     </th>
                   ))}
                   <th className="px-4 py-2 border-b border-gray-300">
@@ -125,7 +127,7 @@ export default function DailyStatusInline({
                   item ? (
                     <tr
                       key={item.id}
-                      className="bg-white hover:bg-gray-50 transition duration-200"
+                      className="bg-white hover:bg-orange-300 transition duration-200"
                     >
                       {columns.map((columnName, i) => (
                         <td
@@ -175,7 +177,7 @@ export default function DailyStatusInline({
                           onClick={() => handleUpdateClick(item.id, item)}
                           className="text-blue-600 hover:text-blue-800 transition"
                         >
-                          <Save className="w-4 h-4" />
+                          <Save className="w-5 h-5" />
                         </button>
                         <Deletebtn
                           id={item.id}
@@ -200,7 +202,7 @@ export default function DailyStatusInline({
                             name={columnName}
                             value={newRow[columnName] || ""}
                             onChange={(e) => handleInputChange(e, columnName)}
-                            className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-24 p-1"
+                            className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
                           >
                             {(columnName === "categoryId"
                               ? Categories
@@ -252,7 +254,7 @@ export default function DailyStatusInline({
             </p>
           )}
           {!newRow && (
-            <div className="flex justify-center item center py-1">
+            <div className="flex justify-center item center py-1 w-full">
               <button
                 onClick={handleAddNewRow}
                 className="flex items-center space-x-1 bg-pink-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
