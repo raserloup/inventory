@@ -75,16 +75,18 @@ model Brand {
 }
 
 model Warehouse {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   title         String
   location      String?
   description   String?
   warehouseType String
-  stockQty      Int           @default(0)
+  stockQty      Int     @default(0)
   items         Item[]
-  dailyStatus   DailyStatus[]
-  createdAt     DateTime      @default(now())
-  updateAt      DateTime      @updatedAt
+
+  topdailyStatus TopdailyStatus[]
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 model AddStockAdjustment {
@@ -157,18 +159,29 @@ model User {
 //   updateAt  DateTime @updatedAt
 // }
 model DailyStatus {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String    @db.ObjectId
-  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-  warehouseId String    @db.ObjectId
-  ownership   String
-  idelqty     String
-  opqty       String
-  downqty     String
-  refnumber   String
-  remark      String
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String   @db.ObjectId
 
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  ownership      String
+  idelqty        String
+  opqty          String
+  downqty        String
+  refnumber      String
+  remark         String
+  topdailyStatus TopdailyStatus[]
+  createdAt      DateTime         @default(now())
+  updateAt       DateTime         @updatedAt
+}
+
+model TopdailyStatus {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  date          String
+  refnumber     String
+  warehouse     Warehouse   @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId   String      @db.ObjectId
+  dailyStatus   DailyStatus @relation(fields: [dailystatusId], references: [id], onDelete: Cascade)
+  dailystatusId String      @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
 }

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Save, Plus, X } from "lucide-react";
 import { getData } from "@/lib/getData";
@@ -14,25 +13,26 @@ export default function DailyStatusInline({
   columns = [],
   resourceTitle,
   Categories,
+  warehouse,
 }) {
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState([]); // Initialize as an empty array
   const [newRow, setNewRow] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    const data = await getData("DailyStatus");
-    // const CategoriesData = getData(`catagories`);
-    // const Categories = await Promise.all([CategoriesData]);
-
-    setRowData(data);
+    try {
+      const data = await getData("DailyStatus");
+      setRowData(data || []); // Set to empty array if data is undefined
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setRowData([]); // Reset rowData on error
+    }
   };
 
   useEffect(() => {
     fetchData();
-    // console.log(fetchData);
   }, []);
 
-  //const equipmenttype = ["Excavator", "Loader", "Dozer"]; // Replace with actual types
   const ownership = ["Owned", "Rented"];
 
   const handleSaveClick = async (id, updatedItem, isUpdate) => {
@@ -53,31 +53,16 @@ export default function DailyStatusInline({
         );
       }
       await fetchData();
+      console.log("dailyStatusData:", updatedItem); // Log updatedItem instead of dailyStatusData
+      console.log("Fetched warehouse:", warehouse);
     } catch (error) {
       console.error("Error saving data:", error);
     }
   };
 
-  const handleDeleteClick = async (id) => {
-    try {
-      await makeDELETERequest(
-        setLoading,
-        `api/DailyStatus?id=${id}`,
-        "DailyStatus",
-        () => {}
-      );
-      await fetchData();
-    } catch (error) {
-      console.error("Error deleting data:", error);
-    }
-  };
-
-  const handleAddNewRow = () => {
-    setNewRow({ ownership: ownership[0] }); // default to the first option, e.g., "Owned"
-  };
-
   const handleInputChange = (e, column, id) => {
     const { value } = e.target;
+
     if (id) {
       setRowData((prevData) =>
         prevData.map((item) =>
@@ -98,20 +83,20 @@ export default function DailyStatusInline({
     setNewRow(null);
   };
 
-  const handleUpdateClick = async (id, updatedItem) => {
-    await handleSaveClick(id, updatedItem, true);
+  const handleAddNewRow = () => {
+    setNewRow({ ownership: ownership[0] });
   };
 
   return (
     <>
-      <div className="w-full flex flex-col items-center bg-white py-6 px-4 rounded-lg shadow-lg  border-gray-500">
-        <div className="relative overflow-x-auto w-full  border-gray-500">
-          {rowData.length > 0 ? (
+      <div className="w-full flex flex-col items-center bg-white py-6 px-4 rounded-lg shadow-lg border-gray-500">
+        <div className="relative overflow-x-auto w-full border-gray-500">
+          {Array.isArray(rowData) && rowData.length > 0 ? ( // Ensure rowData is an array before accessing its length
             <table className="w-full text-sm text-left text-gray-600 border-gray-500">
-              <thead className="text-ellipsis text-gray-600 uppercase bg-orange-300">
+              <thead className="text-gray-600 uppercase bg-orange-300">
                 <tr>
                   {columns.map((columnName, i) => (
-                    <th key={i} className="px-4 py-2 border-b border-gray-300 ">
+                    <th key={i} className="px-4 py-2 border-b border-gray-300">
                       {columnName === "categoryId"
                         ? "Equipment Type"
                         : columnName}
@@ -123,71 +108,72 @@ export default function DailyStatusInline({
                 </tr>
               </thead>
               <tbody>
-                {rowData.map((item) =>
-                  item ? (
-                    <tr
-                      key={item.id}
-                      className="bg-white hover:bg-orange-300 transition duration-200"
-                    >
-                      {columns.map((columnName, i) => (
-                        <td
-                          key={i}
-                          className="px-2 py-2 border-b border-gray-200"
-                        >
-                          {columnName === "categoryId" ||
-                          columnName === "ownership" ? (
-                            <select
-                              name={columnName}
-                              value={item[columnName] || ""}
-                              onChange={(e) =>
-                                handleInputChange(e, columnName, item.id)
-                              }
-                              className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
-                            >
-                              {(columnName === "categoryId"
-                                ? Categories
-                                : ownership
-                              ).map((option, i) =>
-                                columnName === "categoryId" ? (
-                                  <option key={i} value={option.id}>
-                                    {option.title}
-                                  </option>
-                                ) : (
-                                  <option key={i} value={option}>
-                                    {option}
-                                  </option>
-                                )
-                              )}
-                            </select>
-                          ) : (
-                            <input
-                              type="text"
-                              name={columnName}
-                              value={item[columnName] || ""}
-                              onChange={(e) =>
-                                handleInputChange(e, columnName, item.id)
-                              }
-                              className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-24 p-1"
-                            />
-                          )}
-                        </td>
-                      ))}
-                      <td className="px-2 py-2 text-right flex items-center space-x-2">
-                        <button
-                          onClick={() => handleUpdateClick(item.id, item)}
-                          className="text-blue-600 hover:text-blue-800 transition"
-                        >
-                          <Save className="w-5 h-5" />
-                        </button>
-                        <Deletebtn
-                          id={item.id}
-                          endpoint={resourceTitle}
-                          onDeleteSuccess={fetchData}
-                        />
+                {rowData.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="bg-white hover:bg-orange-300 transition duration-200"
+                  >
+                    {columns.map((columnName, i) => (
+                      <td
+                        key={i}
+                        className="px-2 py-2 border-b border-gray-200"
+                      >
+                        {columnName === "categoryId" ||
+                        columnName === "ownership" ? (
+                          <select
+                            name={columnName}
+                            value={item[columnName] || ""}
+                            onChange={(e) =>
+                              handleInputChange(e, columnName, item.id)
+                            }
+                            className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
+                          >
+                            {(columnName === "categoryId"
+                              ? Categories
+                              : ownership
+                            ).map((option, i) => (
+                              <option
+                                key={i}
+                                value={
+                                  columnName === "ownership"
+                                    ? option
+                                    : option.id
+                                }
+                              >
+                                {columnName === "ownership"
+                                  ? option
+                                  : option.title || option.name}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            name={columnName}
+                            value={item[columnName] || ""}
+                            onChange={(e) =>
+                              handleInputChange(e, columnName, item.id)
+                            }
+                            className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-24 p-1"
+                          />
+                        )}
                       </td>
-                    </tr>
-                  ) : null
-                )}
+                    ))}
+                    <td className="px-2 py-2 text-right flex items-center space-x-2">
+                      <button
+                        onClick={() => handleSaveClick(item.id, item, true)}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                      >
+                        <Save className="w-5 h-5" />
+                      </button>
+                      <Deletebtn
+                        id={item.id}
+                        endpoint={resourceTitle}
+                        onDeleteSuccess={fetchData}
+                      />
+                    </td>
+                  </tr>
+                ))}
 
                 {newRow && (
                   <tr className="bg-gray-100">
@@ -207,17 +193,20 @@ export default function DailyStatusInline({
                             {(columnName === "categoryId"
                               ? Categories
                               : ownership
-                            ).map((option, i) =>
-                              columnName === "categoryId" ? (
-                                <option key={i} value={option.id}>
-                                  {option.title}
-                                </option>
-                              ) : (
-                                <option key={i} value={option}>
-                                  {option}
-                                </option>
-                              )
-                            )}
+                            ).map((option, i) => (
+                              <option
+                                key={i}
+                                value={
+                                  columnName === "ownership"
+                                    ? option
+                                    : option.id
+                                }
+                              >
+                                {columnName === "ownership"
+                                  ? option
+                                  : option.title || option.name}
+                              </option>
+                            ))}
                           </select>
                         ) : (
                           <input
@@ -254,13 +243,12 @@ export default function DailyStatusInline({
             </p>
           )}
           {!newRow && (
-            <div className="flex justify-center item center py-1 w-full">
+            <div className="flex justify-center item-center py-1 w-full">
               <button
                 onClick={handleAddNewRow}
-                className="flex items-center space-x-1 bg-pink-600 text-white px-4 py-1 rounded-md hover:bg-blue-700 transition"
+                className="px-3 py-1 bg-green-500 text-white rounded ml-2"
               >
                 <Plus className="w-4 h-4" />
-                {/* <span>Add </span> */}
               </button>
             </div>
           )}
