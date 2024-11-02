@@ -19,7 +19,6 @@ export async function POST(request) {
 
                 warehouseId: dailyStatusTopData.warehouseId,
                 date: dailyStatusTopData.date,
-                dailystatusId: dailyStatusTopData.dailystatusId,
                 refnumber: dailyStatusTopData.refnumber,
 
             }
@@ -49,7 +48,7 @@ export async function GET(request) {
             include: {
 
                 warehouse: true,////Returns single warehouse by id which is related
-                dailyStatus: true,
+
 
             }
         });

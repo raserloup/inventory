@@ -9,10 +9,11 @@ export default async function DailyStatus() {
   const CategoriesData = getData(`catagories`);
   const [Categories] = await Promise.all([CategoriesData]);
   const warehouseData = getData(`warehouse`);
-  const [warehouse] = await Promise.all([warehouseData]);
-  const dailystatusTopData = getData("TopdailyStatus");
-  // const [dailystatusTop] = await Promise.all([dailystatusTop]);
+  const [Warehouse] = await Promise.all([warehouseData]);
+  const dailystatusTopData = getData(`TopdailyStatus`);
+  const [dailystatusTop] = await Promise.all([dailystatusTopData]);
 
+  const TopColumns = ["warehouseId", "date", "refnumber"];
   const columns = [
     "categoryId",
     "ownership",
@@ -24,11 +25,7 @@ export default async function DailyStatus() {
   ];
   return (
     <div>
-      <FixedHeader
-        title="Daily Status"
-        newLink="#"
-        // newLink=""/dashboard/inventory/DailyStatus/new
-      />
+      <FixedHeader title="Daily Status" newLink="#" />
       <DailyStatusSubTable
         Categories={Categories}
         data={dailystatusData}
@@ -36,30 +33,10 @@ export default async function DailyStatus() {
         resourceTitle="DailyStatus"
       />
       <DailyStatusTopForm
-        warehouses={[
-          { title: "Warehouse 1" },
-          { title: "Warehouse 2" },
-          { title: "Warehouse 3" },
-        ]}
-        resourceTitle="Daily Status"
-        data={[
-          {
-            warehouse: "Warehouse 1",
-            date: "2024-10-29",
-            referenceNumber: "W1-00001",
-          },
-          {
-            warehouse: "Warehouse 2",
-            date: "2024-10-30",
-            referenceNumber: "W2-00002",
-          },
-          {
-            warehouse: "Warehouse 3",
-            date: "2024-10-30",
-            referenceNumber: "W3-00003",
-          },
-          // other entries...
-        ]}
+        TopColumns={TopColumns}
+        resourceTitle="TopdailyStatus"
+        data={dailystatusTop}
+        Warehouse={Warehouse}
       />
     </div>
   );
@@ -75,6 +52,29 @@ export default async function DailyStatus() {
       data={dailystatusData}
       columns={columns}
       resourceName="DailyStatus"
-    /> */
+      /> */
+    // warehouses={[
+    //   { title: "Warehouse 1" },
+    //   { title: "Warehouse 2" },
+    //   { title: "Warehouse 3" },
+    // ]}
+    // data={[
+    //   {
+    //     warehouse: "Warehouse 1",
+    //     date: "2024-10-29",
+    //     referenceNumber: "W1-00001",
+    //   },
+    //   {
+    //     warehouse: "Warehouse 2",
+    //     date: "2024-10-30",
+    //     referenceNumber: "W2-00002",
+    //   },
+    //   {
+    //     warehouse: "Warehouse 3",
+    //     date: "2024-10-30",
+    //     referenceNumber: "W3-00003",
+    //   },
+    //   // other entries...
+    // ]}
   }
 }

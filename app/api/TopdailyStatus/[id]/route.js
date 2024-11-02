@@ -10,7 +10,7 @@ export async function GET(request, { params: { id } }) {
             include: {
 
                 warehouse: true,
-                dailyStatus: true,
+
             }
         });
         return NextResponse.json(dailyStatustop);
@@ -41,7 +41,7 @@ export async function PUT(request, { params: { id } }) {
 
                 warehouseId: DailyStatustop.warehouseId,
                 date: DailyStatustop.date,
-                dailystatusId: DailyStatustop.dailystatusId,
+
                 refnumber: DailyStatustop.refnumber,
             }
         });
@@ -55,30 +55,7 @@ export async function PUT(request, { params: { id } }) {
         }, { status: 500 })
     }
 }
-// export async function DELETE(request) {
-//     //here we use NEXT URL to search params
-//     try {
-//         const id = request.nextUrl.searchParams.get("id")
-//         const DailyStatus = await db.DailyStatus.delete({
-//             where: {
-//                 id
-//             }
-//         })
-//         //console.log(DailyStatus)
-//         return NextResponse.json(DailyStatus)
-//     } catch (error) {
-//         console.log(error)
-//         return NextResponse.json(
-//             {
-//                 error,
-//                 message: "Failed to delete DailyStatus",
-//             },
-//             {
-//                 status: 500,
-//             }
-//         );
-//     }
-// }
+
 export async function DELETE(request) {
     try {
         const id = request.nextUrl.searchParams.get("id");
