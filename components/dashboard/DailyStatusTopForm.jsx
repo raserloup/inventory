@@ -1,20 +1,59 @@
 "use client";
-
-import { Link, Pencil, Plus, X, Save } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import {
+  Plus,
+  X,
+  Save,
+  ChevronLast,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import Deletebtn from "./Deletebtn";
 import { getData } from "@/lib/getData";
 import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import DailyStatusInline from "./DailyStatusSubTable";
 
 export default function DailyStatusTopForm({
   data = [],
   TopColumns = [],
   resourceTitle,
   Warehouse,
+  Categories,
 }) {
   const [rowData, setRowData] = useState(data);
   const [newRow, setNewRow] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1; // Adjust items per page as needed
+  const [CategoriesData, setCategory] = useState([]);
+
+  // const CategoriesData = getData(`catagories`);
+
+  const fetchCategory = async () => {
+    try {
+      const data = await getData("catagories");
+      setCategory(data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+    console.log("this is category Data:", data);
+  };
+  const columns = [
+    "categoryId",
+    "ownership",
+    "opqty",
+    "idelqty",
+    "downqty",
+    "remark",
+    "refnumber",
+  ];
+  const fetchSubDailystatusData = async () => {
+    try {
+      const dailystatusData = await getData("DailyStatus");
+    } catch (error) {
+      console.error("Error the sub daily status data fetching data:", error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -27,13 +66,14 @@ export default function DailyStatusTopForm({
   };
 
   useEffect(() => {
+    fetchCategory();
     fetchData();
+    fetchSubDailystatusData();
   }, []);
 
   const handleAddNewRow = () => {
     setNewRow({
       warehouseId: "",
-
       date: "",
       refnumber: "",
     });
@@ -57,7 +97,6 @@ export default function DailyStatusTopForm({
         );
       }
       await fetchData();
-      console.log("TopdailyStatusData:", updatedItem);
     } catch (error) {
       console.error("Error saving data:", error);
     }
@@ -104,8 +143,8 @@ export default function DailyStatusTopForm({
 
   const generateIncrementedRefNumber = (prefix) => {
     const existingNumbers = rowData
-      .map((item) => item.refnumber) // Use dot notation
-      .filter((ref) => ref && ref.startsWith(prefix)); // Check if ref is defined
+      .map((item) => item.refnumber)
+      .filter((ref) => ref && ref.startsWith(prefix));
 
     const maxNumber = existingNumbers.reduce((max, ref) => {
       const numPart = parseInt(ref.slice(3), 10) || 0;
@@ -113,17 +152,31 @@ export default function DailyStatusTopForm({
     }, 0);
 
     const newNumber = maxNumber + 1;
-    return `${prefix}${String(newNumber).padStart(4, "0")}`; // e.g., "ABC0001"
+    return `${prefix}${String(newNumber).padStart(4, "0")}`;
   };
 
   const handleSaveNewRow = async () => {
     await handleSaveClick(null, newRow, false);
-    //   setRowData((prevData) => [...prevData, newRow]);
     setNewRow(null);
   };
 
   const handleCancelNewRow = () => {
     setNewRow(null);
+  };
+
+  // Pagination Controls
+  const totalPages = Math.ceil(rowData.length / itemsPerPage);
+  const currentData = rowData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
   return (
@@ -143,7 +196,7 @@ export default function DailyStatusTopForm({
             </tr>
           </thead>
           <tbody>
-            {rowData.map((item, i) => (
+            {currentData.map((item, i) => (
               <tr
                 key={i}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -180,17 +233,6 @@ export default function DailyStatusTopForm({
                   </td>
                 ))}
                 <td className="px-6 py-4 text-right flex items-center space-x-4">
-                  {resourceTitle.includes("TopdailyStatus") ? (
-                    ""
-                  ) : (
-                    <Link
-                      href={`/dashboard/equipments/${resourceTitle}/${item.id}`}
-                      className="font-medium text-blue-600 dark:text-blue-500 flex items-center space-x-1"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      <span>Edit</span>
-                    </Link>
-                  )}
                   <button
                     onClick={() => handleSaveClick(item.id, item, true)}
                     className="text-blue-600 hover:text-blue-800 transition"
@@ -213,9 +255,7 @@ export default function DailyStatusTopForm({
                       <select
                         name={columnName}
                         value={newRow[columnName] || ""}
-                        onChange={(e) =>
-                          handleInputChange(e, columnName, newRow.id)
-                        }
+                        onChange={(e) => handleInputChange(e, columnName)}
                         className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
                       >
                         <option value="">Select Warehouse</option>
@@ -271,6 +311,60 @@ export default function DailyStatusTopForm({
           </button>
         </div>
       )}
+      {/* Here i provided the SubTable Component */}
+
+      <DailyStatusInline
+        Categories={CategoriesData}
+        data={rowData}
+        columns={columns}
+        resourceTitle="DailyStatus"
+      />
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center space-x-2 mt-4">
+        <span className="px-3 py-1">Record:</span>
+
+        {/* First Page Button */}
+        <button
+          onClick={() => setCurrentPage(1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
+          <ChevronLast className="w-4 h-4 transform rotate-180" />
+        </button>
+
+        {/* Previous Page Button */}
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {/* Current Page Number */}
+        <span className="px-3 py-1">{`${currentPage} `}</span>
+
+        {/* Next Page Button */}
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+
+        {/* Last Page Button */}
+        <button
+          onClick={() => setCurrentPage(totalPages)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
+          <ChevronLast className="w-4 h-4" />
+        </button>
+
+        <span className="px-3 py-1">{`of ${totalPages}`}</span>
+      </div>
     </div>
   );
 }

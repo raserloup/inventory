@@ -33,27 +33,27 @@ export default async function DailyStatus() {
   return (
     <div>
       <FixedHeader title="Daily Status" newLink="#" />
-      <DailyStatusSubTable
+      {/* <DailyStatusSubTable
         Categories={Categories}
         data={dailystatusData}
         columns={columns}
         resourceTitle="DailyStatus"
-      />
+      /> */}
       <DailyStatusTopForm
-        // Categories={Categories}
         TopColumns={TopColumns}
         resourceTitle="TopdailyStatus"
         data={dailystatusTop}
         Warehouse={Warehouse}
+        Categories={CategoriesData}
       />
-      <DailyStatusForm
+      {/* <DailyStatusForm
         TopColumns={TopColumns}
         resourceTitle="TopdailyStatus" // Set to the desired resource type
         data={dailystatusData} // Use `dailystatusData` or `dailystatusTop` based on `resourceTitle`
         Warehouse={Warehouse}
         Categories={Categories}
         columns={columns}
-      />
+      /> */}
     </div>
   );
 }
