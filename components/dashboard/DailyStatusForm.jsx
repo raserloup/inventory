@@ -1,16 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Link, Pencil, Plus, X, Save } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import Deletebtn from "./Deletebtn";
 import { getData } from "@/lib/getData";
 import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
+import Deletebtn from "./Deletebtn";
 
-export default function DailyStatusTopForm({
+export default function DailyStatusForm({
   data = [],
   TopColumns = [],
+  columns = [],
   resourceTitle,
-  Warehouse,
+  Warehouse = [],
+  Categories = [],
+  ownership = ["Owned", "Rented"],
 }) {
   const [rowData, setRowData] = useState(data);
   const [newRow, setNewRow] = useState(null);
@@ -18,7 +21,9 @@ export default function DailyStatusTopForm({
 
   const fetchData = async () => {
     try {
-      const fetchedData = await getData("TopdailyStatus");
+      const fetchedData = await getData(
+        resourceTitle === "TopdailyStatus" ? "TopdailyStatus" : "DailyStatus"
+      );
       setRowData(fetchedData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -33,13 +38,19 @@ export default function DailyStatusTopForm({
   const handleAddNewRow = () => {
     setNewRow({
       warehouseId: "",
-
+      categoryId: Categories.length > 0 ? Categories[0].id : null,
+      ownership: ownership[0],
       date: "",
       refnumber: "",
     });
   };
 
   const handleSaveClick = async (id, updatedItem, isUpdate) => {
+    if (resourceTitle === "DailyStatus" && !updatedItem.categoryId) {
+      console.error("Category ID is required.");
+      return;
+    }
+
     try {
       if (isUpdate) {
         await makePUTRequest(
@@ -57,7 +68,6 @@ export default function DailyStatusTopForm({
         );
       }
       await fetchData();
-      console.log("TopdailyStatusData:", updatedItem);
     } catch (error) {
       console.error("Error saving data:", error);
     }
@@ -104,21 +114,19 @@ export default function DailyStatusTopForm({
 
   const generateIncrementedRefNumber = (prefix) => {
     const existingNumbers = rowData
-      .map((item) => item.refnumber) // Use dot notation
-      .filter((ref) => ref && ref.startsWith(prefix)); // Check if ref is defined
+      .map((item) => item.refnumber)
+      .filter((ref) => ref && ref.startsWith(prefix));
 
     const maxNumber = existingNumbers.reduce((max, ref) => {
       const numPart = parseInt(ref.slice(3), 10) || 0;
       return Math.max(max, numPart);
     }, 0);
 
-    const newNumber = maxNumber + 1;
-    return `${prefix}${String(newNumber).padStart(4, "0")}`; // e.g., "ABC0001"
+    return `${prefix}${String(maxNumber + 1).padStart(4, "0")}`;
   };
 
   const handleSaveNewRow = async () => {
     await handleSaveClick(null, newRow, false);
-    //   setRowData((prevData) => [...prevData, newRow]);
     setNewRow(null);
   };
 
@@ -126,15 +134,22 @@ export default function DailyStatusTopForm({
     setNewRow(null);
   };
 
+  const displayedColumns =
+    resourceTitle === "TopdailyStatus" ? TopColumns : columns;
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       {rowData.length > 0 ? (
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              {TopColumns.map((columnName, i) => (
+              {displayedColumns.map((columnName, i) => (
                 <th key={i} scope="col" className="px-6 py-3">
-                  {columnName === "warehouseId" ? "warehouse" : columnName}
+                  {columnName === "warehouseId"
+                    ? "Warehouse"
+                    : columnName === "categoryId"
+                    ? "Equipment Type"
+                    : columnName}
                 </th>
               ))}
               <th scope="col" className="px-6 py-3">
@@ -143,14 +158,16 @@ export default function DailyStatusTopForm({
             </tr>
           </thead>
           <tbody>
-            {rowData.map((item, i) => (
+            {rowData.map((item) => (
               <tr
-                key={i}
+                key={item.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
-                {TopColumns.map((columnName, j) => (
-                  <td key={j} className="px-6 py-4">
-                    {columnName === "warehouseId" ? (
+                {displayedColumns.map((columnName, i) => (
+                  <td key={i} className="px-6 py-4">
+                    {columnName === "warehouseId" ||
+                    columnName === "categoryId" ||
+                    columnName === "ownership" ? (
                       <select
                         name={columnName}
                         value={item[columnName] || ""}
@@ -159,10 +176,21 @@ export default function DailyStatusTopForm({
                         }
                         className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
                       >
-                        <option value="">Select Warehouse</option>
-                        {Warehouse.map((warehouse) => (
-                          <option key={warehouse.id} value={warehouse.id}>
-                            {warehouse.title}
+                        {(columnName === "categoryId"
+                          ? Categories
+                          : columnName === "ownership"
+                          ? ownership
+                          : Warehouse
+                        ).map((option, i) => (
+                          <option
+                            key={i}
+                            value={
+                              columnName === "ownership" ? option : option.id
+                            }
+                          >
+                            {columnName === "ownership"
+                              ? option
+                              : option.title || option.name}
                           </option>
                         ))}
                       </select>
@@ -207,21 +235,32 @@ export default function DailyStatusTopForm({
             ))}
             {newRow && (
               <tr className="bg-gray-100">
-                {TopColumns.map((columnName, j) => (
-                  <td key={j} className="px-6 py-4">
-                    {columnName === "warehouseId" ? (
+                {displayedColumns.map((columnName, i) => (
+                  <td key={i} className="px-6 py-4">
+                    {columnName === "warehouseId" ||
+                    columnName === "categoryId" ||
+                    columnName === "ownership" ? (
                       <select
                         name={columnName}
                         value={newRow[columnName] || ""}
-                        onChange={(e) =>
-                          handleInputChange(e, columnName, newRow.id)
-                        }
+                        onChange={(e) => handleInputChange(e, columnName)}
                         className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-full p-1"
                       >
-                        <option value="">Select Warehouse</option>
-                        {Warehouse.map((warehouse) => (
-                          <option key={warehouse.id} value={warehouse.id}>
-                            {warehouse.title}
+                        {(columnName === "categoryId"
+                          ? Categories
+                          : columnName === "ownership"
+                          ? ownership
+                          : Warehouse
+                        ).map((option, i) => (
+                          <option
+                            key={i}
+                            value={
+                              columnName === "ownership" ? option : option.id
+                            }
+                          >
+                            {columnName === "ownership"
+                              ? option
+                              : option.title || option.name}
                           </option>
                         ))}
                       </select>
@@ -231,7 +270,7 @@ export default function DailyStatusTopForm({
                         name={columnName}
                         value={newRow[columnName] || ""}
                         onChange={(e) => handleInputChange(e, columnName)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                        className="bg-gray-100 border border-gray-300 text-gray-900 rounded-md focus:ring-2 focus:ring-blue-500 block w-24 p-1"
                       />
                     )}
                   </td>
@@ -239,17 +278,15 @@ export default function DailyStatusTopForm({
                 <td className="px-6 py-4 text-right flex items-center space-x-4">
                   <button
                     onClick={handleSaveNewRow}
-                    className="text-blue-600 dark:text-blue-500 flex items-center space-x-1"
+                    className="text-blue-600 hover:text-blue-800 transition"
                   >
-                    <Save className="w-4 h-4" />
-                    <span>Save</span>
+                    <Save className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleCancelNewRow}
-                    className="text-red-600 dark:text-red-500 flex items-center space-x-1"
+                    className="text-red-600 hover:text-red-800 transition"
                   >
-                    <X className="w-4 h-4" />
-                    <span>Cancel</span>
+                    <X className="w-5 h-5" />
                   </button>
                 </td>
               </tr>
@@ -257,20 +294,15 @@ export default function DailyStatusTopForm({
           </tbody>
         </table>
       ) : (
-        <p className="p-4 text-xl bg-white text-center">
-          There is NO Data to Display
-        </p>
+        <p className="text-center py-4">No records available.</p>
       )}
-      {!newRow && (
-        <div className="flex justify-center items-center py-1 w-full">
-          <button
-            onClick={handleAddNewRow}
-            className="px-3 py-1 bg-green-500 text-white rounded ml-2"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      <button
+        onClick={handleAddNewRow}
+        className="mt-4 flex items-center space-x-1 text-blue-600"
+      >
+        <Plus className="w-5 h-5" />
+        <span>Add New Row</span>
+      </button>
     </div>
   );
 }

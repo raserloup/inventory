@@ -36,24 +36,28 @@ export default function DailyStatusInline({
   const ownership = ["Owned", "Rented"];
 
   const handleSaveClick = async (id, updatedItem, isUpdate) => {
+    if (!updatedItem.categoryId) {
+      console.error("Category ID is required.");
+      return;
+    }
     try {
       if (isUpdate) {
         await makePUTRequest(
           setLoading,
-          `api/DailyStatus/${updatedItem.id}`,
+          `api/${resourceTitle}/${updatedItem.id}`,
           updatedItem,
-          "DailyStatus"
+          resourceTitle
         );
       } else {
         await makePOSTRequest(
           setLoading,
-          "api/DailyStatus",
+          `api/${resourceTitle}`,
           updatedItem,
-          "DailyStatus"
+          resourceTitle
         );
       }
       await fetchData();
-      console.log("dailyStatusData:", updatedItem); // Log updatedItem instead of dailyStatusData
+      console.log("dailyStatusData:", updatedItem);
       console.log("Fetched warehouse:", warehouse);
     } catch (error) {
       console.error("Error saving data:", error);
@@ -62,7 +66,6 @@ export default function DailyStatusInline({
 
   const handleInputChange = (e, column, id) => {
     const { value } = e.target;
-
     if (id) {
       setRowData((prevData) =>
         prevData.map((item) =>
@@ -84,7 +87,10 @@ export default function DailyStatusInline({
   };
 
   const handleAddNewRow = () => {
-    setNewRow({ ownership: ownership[0] });
+    setNewRow({
+      ownership: ownership[0],
+      categoryId: Categories.length > 0 ? Categories[0].id : null,
+    });
   };
 
   return (

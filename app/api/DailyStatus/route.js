@@ -3,37 +3,43 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
     try {
-        // Read the request body only once
+        // Parse request body
         const dailyStatusData = await request.json();
         const { ownership, remark, idelqty, opqty, downqty, refnumber, categoryId } = dailyStatusData;
 
-        // Use the destructured values directly in the Prisma create function
+        // Validate categoryId
+        if (!categoryId) {
+            throw new Error("Category ID is required.");
+        }
+
+        // Create DailyStatus with valid categoryId
         const dailyStatus = await db.DailyStatus.create({
             data: {
-                categoryId: categoryId,
-                idelqty: idelqty,
-                opqty: opqty,
-                downqty: downqty,
-                refnumber: refnumber,
-                ownership: ownership,
-                remark: remark,
-            }
+                categoryId,
+                idelqty,
+                opqty,
+                downqty,
+                refnumber,
+                ownership,
+                remark,
+            },
         });
 
         console.log(dailyStatus);
-        return NextResponse.json(dailyStatus);
+        return NextResponse.json(dailyStatus, { status: 201 });
 
     } catch (error) {
-        console.log(error);
+        console.error('Error creating DailyStatus:', error.message);
         return NextResponse.json(
             {
-                error,
+                error: error.message,
                 message: "Failed to create a DailyStatus",
             },
             { status: 500 }
         );
     }
 }
+
 
 export async function GET(request) {
     try {

@@ -1,4 +1,5 @@
 // DailyStatusPage.js (Server Component)
+import DailyStatusForm from "@/components/dashboard/DailyStatusForm";
 import DailyStatusSubTable from "@/components/dashboard/DailyStatusSubTable";
 import DailyStatusTopForm from "@/components/dashboard/DailyStatusTopForm";
 import FixedHeader from "@/components/dashboard/FixedHeader";
@@ -7,11 +8,17 @@ import { getData } from "@/lib/getData";
 export default async function DailyStatus() {
   const dailystatusData = await getData("DailyStatus");
   const CategoriesData = getData(`catagories`);
-  const [Categories] = await Promise.all([CategoriesData]);
+  // const [Categories] = await Promise.all([CategoriesData]);
   const warehouseData = getData(`warehouse`);
-  const [Warehouse] = await Promise.all([warehouseData]);
+  // const [Warehouse] = await Promise.all([warehouseData]);
   const dailystatusTopData = getData(`TopdailyStatus`);
-  const [dailystatusTop] = await Promise.all([dailystatusTopData]);
+  // const [dailystatusTop] = await Promise.all([dailystatusTopData]);
+
+  const [Categories, Warehouse, dailystatusTop] = await Promise.all([
+    CategoriesData,
+    warehouseData,
+    dailystatusTopData,
+  ]);
 
   const TopColumns = ["warehouseId", "date", "refnumber"];
   const columns = [
@@ -33,10 +40,19 @@ export default async function DailyStatus() {
         resourceTitle="DailyStatus"
       />
       <DailyStatusTopForm
+        // Categories={Categories}
         TopColumns={TopColumns}
         resourceTitle="TopdailyStatus"
         data={dailystatusTop}
         Warehouse={Warehouse}
+      />
+      <DailyStatusForm
+        TopColumns={TopColumns}
+        resourceTitle="TopdailyStatus" // Set to the desired resource type
+        data={dailystatusData} // Use `dailystatusData` or `dailystatusTop` based on `resourceTitle`
+        Warehouse={Warehouse}
+        Categories={Categories}
+        columns={columns}
       />
     </div>
   );
