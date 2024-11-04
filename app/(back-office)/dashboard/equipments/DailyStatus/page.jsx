@@ -39,13 +39,15 @@ export default async function DailyStatus() {
         columns={columns}
         resourceTitle="DailyStatus"
       /> */}
-      <DailyStatusTopForm
-        TopColumns={TopColumns}
-        resourceTitle="TopdailyStatus"
-        data={dailystatusTop}
-        Warehouse={Warehouse}
-        Categories={CategoriesData}
-      />
+      <div className="my-4 p-8">
+        <DailyStatusTopForm
+          TopColumns={TopColumns}
+          resourceTitle="TopdailyStatus"
+          data={dailystatusTop}
+          Warehouse={Warehouse}
+          Categories={CategoriesData}
+        />
+      </div>
       {/* <DailyStatusForm
         TopColumns={TopColumns}
         resourceTitle="TopdailyStatus" // Set to the desired resource type

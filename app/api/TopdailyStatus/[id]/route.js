@@ -8,9 +8,7 @@ export async function GET(request, { params: { id } }) {
                 id //to fetch single DailyStatus by id on latest version Find one is changed to FindUnique
             },
             include: {
-
                 warehouse: true,
-
             }
         });
         return NextResponse.json(dailyStatustop);
@@ -29,6 +27,7 @@ export async function PUT(request, { params: { id } }) {
         where: {
             id: dailyStatustopData.warehouseId,
         }
+
     })
 
 

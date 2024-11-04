@@ -43,7 +43,7 @@ export async function GET(request) {
     try {
         const dailyStatusTop = await db.TopdailyStatus.findMany({
             orderBy: {
-                createdAt: 'desc' //latest Warehouse
+                createdAt: 'asc' //latest Warehouse
             },
             include: {
 
@@ -51,6 +51,7 @@ export async function GET(request) {
 
 
             }
+
         });
         return NextResponse.json(dailyStatusTop);
     } catch (error) {
