@@ -14,6 +14,8 @@ export default function DailyStatusInline({
   resourceTitle,
   Categories = [],
   warehouse,
+  parentRefnumber,
+  parenttopdailyStatusId,
 }) {
   const [rowData, setRowData] = useState([]);
   const [newRow, setNewRow] = useState({
@@ -21,25 +23,50 @@ export default function DailyStatusInline({
     idelqty: "",
     downqty: "",
     remark: "",
-    refnumber: "",
+    refnumber: parentRefnumber || "",
+    topdailyStatusId: parenttopdailyStatusId || "",
     ownership: "Owned",
     categoryId: Categories.length > 0 ? Categories[0].id : null,
   });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (parenttopdailyStatusId) {
+      fetchData(); // Fetches data specific to the current topdailyStatusId
+    }
+  }, [parenttopdailyStatusId]);
+
+  const [noData, setNoData] = useState(false); // New state to handle no data condition
+
   const fetchData = async () => {
     try {
-      const data = await getData("DailyStatus");
-      setRowData(data || []);
+      const data = await getData(
+        `DailyStatus/parent/${parenttopdailyStatusId}`
+      );
+      if (data && data.length > 0) {
+        setRowData(data);
+        setNoData(false);
+      } else {
+        setRowData([]);
+        setNoData(true);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       setRowData([]);
+      setNoData(true);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    setNewRow((prev) => ({ ...prev, refnumber: parentRefnumber || "" }));
+  }, [parentRefnumber]);
+
+  useEffect(() => {
+    setNewRow((prev) => ({
+      ...prev,
+      topdailyStatusId: parenttopdailyStatusId || "",
+    }));
+  }, [parenttopdailyStatusId]);
 
   const ownership = ["Owned", "Rented"];
 
@@ -65,8 +92,6 @@ export default function DailyStatusInline({
         );
       }
       await fetchData();
-      console.log("dailyStatusData:", updatedItem);
-      console.log("Fetched warehouse:", warehouse);
     } catch (error) {
       console.error("Error saving data:", error);
     }
@@ -92,7 +117,8 @@ export default function DailyStatusInline({
       idelqty: "",
       downqty: "",
       remark: "",
-      refnumber: "",
+      refnumber: parentRefnumber || "",
+      topdailyStatusId: parenttopdailyStatusId || "",
       ownership: "Owned",
       categoryId: Categories.length > 0 ? Categories[0].id : null,
     });

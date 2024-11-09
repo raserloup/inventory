@@ -5,12 +5,14 @@ export async function GET(request, { params: { id } }) {
     try {
         const dailyStatus = await db.DailyStatus.findUnique({
             where: {
-                id //to fetch single DailyStatus by id on latest version Find one is changed to FindUnique
+                id
             },
             include: {
                 category: true, //Returns all fields for all categories
+                topdailyStatus: true,//Returns all fields for all TopdailyStatus
             }
         });
+        console.log("where", dailyStatus)
         return NextResponse.json(dailyStatus);
     } catch (error) {
         console.log(error)
@@ -22,22 +24,22 @@ export async function GET(request, { params: { id } }) {
 }
 export async function PUT(request, { params: { id } }) {
     // here specify the columns you want to update
-    const { title, idelqty,
-        opqty,
-        downqty,
-        refnumber, categoryId, ownership, remark } = await request.json()
     try {
+        const dailyStatusData = await request.json()
         const DailyStatus = await db.DailyStatus.update({
             where: {
                 id //to updating DailyStatus data by id 
             },
             data: {
-                title,
-                categoryId,
-                idelqty,
-                opqty,
-                downqty,
-                refnumber, ownership, remark,
+                title: dailyStatusData.title,
+                categoryId: dailyStatusData.categoryId,
+                topdailyStatusId: dailyStatusData.topdailyStatusId,
+                idelqty: dailyStatusData.idelqty,
+                opqty: dailyStatusData.opqty,
+                downqty: dailyStatusData.downqty,
+                refnumber: dailyStatusData.refnumber,
+                ownership: dailyStatusData.ownership,
+                remark: dailyStatusData.remark
             }
         });
         console.log(DailyStatus)
@@ -48,9 +50,9 @@ export async function PUT(request, { params: { id } }) {
             error,
             message: `Failed to update the DailyStatus by this ${id}`
         }, { status: 500 })
+
     }
 }
-
 export async function DELETE(request) {
     try {
         const id = request.nextUrl.searchParams.get("id");

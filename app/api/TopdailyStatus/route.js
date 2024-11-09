@@ -46,10 +46,7 @@ export async function GET(request) {
                 createdAt: 'asc' //latest Warehouse
             },
             include: {
-
                 warehouse: true,////Returns single warehouse by id which is related
-
-
             }
 
         });

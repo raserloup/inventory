@@ -3,31 +3,46 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
     try {
-        // Parse request body
         const dailyStatusData = await request.json();
-        const { ownership, remark, idelqty, opqty, downqty, refnumber, categoryId } = dailyStatusData;
 
-        // Validate categoryId
+        // Fetch the TopDailyStatus and Category records
+        const topDailyStatus = await db.TopdailyStatus.findUnique({
+            where: { id: dailyStatusData.topdailyStatusId },
+        });
+        const categoryId = await db.Category.findUnique({
+            where: { id: dailyStatusData.categoryId },
+        });
+
+        // Validate Category and TopDailyStatus
         if (!categoryId) {
-            throw new Error("Category ID is required.");
+            throw new Error("Invalid Category ID.");
+        }
+        if (!topDailyStatus) {
+            throw new Error("Invalid TopDailyStatus ID.");
         }
 
-        // Create DailyStatus with valid categoryId
+        // Create DailyStatus with nested creation for DailyStatusInline
         const dailyStatus = await db.DailyStatus.create({
             data: {
-                categoryId,
-                idelqty,
-                opqty,
-                downqty,
-                refnumber,
-                ownership,
-                remark,
+                categoryId: dailyStatusData.categoryId,
+                topdailyStatusId: dailyStatusData.topdailyStatusId,
+                idelqty: dailyStatusData.idelqty,
+                opqty: dailyStatusData.opqty,
+                downqty: dailyStatusData.downqty,
+                refnumber: dailyStatusData.refnumber,
+                ownership: dailyStatusData.ownership,
+                remark: dailyStatusData.remark,
+                // DailyStatusInline: {  // Add nested creation for DailyStatusInline
+                //     create: {
+                //         topdailyStatusId: dailyStatusData.topdailyStatusId,
+                //         // any additional fields for DailyStatusInline
+                //     },
+                // },
             },
         });
 
         console.log(dailyStatus);
         return NextResponse.json(dailyStatus, { status: 201 });
-
     } catch (error) {
         console.error('Error creating DailyStatus:', error.message);
         return NextResponse.json(
@@ -45,10 +60,11 @@ export async function GET(request) {
     try {
         const dailyStatus = await db.DailyStatus.findMany({
             orderBy: {
-                createdAt: 'desc' //latest Warehouse
+                createdAt: 'asc' //latest dailyStatus
             },
             include: {
-                category: true, //Returns all fields for all categories
+                category: true,
+                topdailyStatus: true, /* include only necessary fields */
             }
         });
         return NextResponse.json(dailyStatus);

@@ -7,6 +7,7 @@ import {
   ChevronLast,
   ChevronRight,
   ChevronLeft,
+  FilePlus2,
 } from "lucide-react";
 import Deletebtn from "./Deletebtn";
 import { getData } from "@/lib/getData";
@@ -18,65 +19,42 @@ export default function DailyStatusTopForm({
   TopColumns = [],
   resourceTitle,
   Warehouse,
-  Categories,
+  // Categories,
 }) {
-  const [isAddingNewRow, setIsAddingNewRow] = useState(false); // New state to track if adding a new row
+  const [isAddingNewRow, setIsAddingNewRow] = useState(false);
   const [newRow, setNewRow] = useState(null);
   const [rowData, setRowData] = useState(data);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1; // Adjust items per page as needed
+  const itemsPerPage = 1;
   const [CategoriesData, setCategory] = useState([]);
 
-  // const CategoriesData = getData(`catagories`);
-
-  const fetchCategory = async () => {
-    try {
-      const data = await getData("catagories");
-      setCategory(data || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-    console.log("this is category Data:", data);
-  };
-  const columns = [
-    "categoryId",
-    "ownership",
-    "opqty",
-    "idelqty",
-    "downqty",
-    "remark",
-    "refnumber",
-  ];
-  const fetchSubDailystatusData = async () => {
-    try {
-      const dailystatusData = await getData("DailyStatus");
-    } catch (error) {
-      console.error("Error the sub daily status data fetching data:", error);
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const fetchedData = await getData("TopdailyStatus");
-      setRowData(fetchedData || []);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setRowData([]);
-    }
-  };
-  const goToLastPage = (newRowData) => {
-    const totalPages = Math.ceil(newRowData.length / itemsPerPage);
-    setCurrentPage(totalPages);
-  };
-
   useEffect(() => {
-    fetchCategory();
+    const fetchData = async () => {
+      try {
+        const fetchedData = await getData("TopdailyStatus");
+        setRowData(fetchedData || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setRowData([]);
+      }
+    };
+
+    const fetchCategory = async () => {
+      try {
+        const data = await getData("catagories");
+        setCategory(data || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
     fetchData();
-    fetchSubDailystatusData();
+    fetchCategory();
   }, []);
+
   useEffect(() => {
-    goToLastPage(rowData);
+    setCurrentPage(Math.ceil(rowData.length / itemsPerPage));
   }, [rowData]);
 
   const handleAddingNewRow = () => {
@@ -85,27 +63,18 @@ export default function DailyStatusTopForm({
       date: "",
       refnumber: "",
     });
-    setIsAddingNewRow(true); // Set adding row mode to true
+    setIsAddingNewRow(true);
   };
 
   const handleSaveClick = async (id, updatedItem, isUpdate) => {
+    const endpoint = isUpdate
+      ? `api/${resourceTitle}/${updatedItem.id}`
+      : `api/${resourceTitle}`;
+    const saveRequest = isUpdate ? makePUTRequest : makePOSTRequest;
     try {
-      if (isUpdate) {
-        await makePUTRequest(
-          setLoading,
-          `api/${resourceTitle}/${updatedItem.id}`,
-          updatedItem,
-          resourceTitle
-        );
-      } else {
-        await makePOSTRequest(
-          setLoading,
-          `api/${resourceTitle}`,
-          updatedItem,
-          resourceTitle
-        );
-      }
-      await fetchData();
+      await saveRequest(setLoading, endpoint, updatedItem, resourceTitle);
+      const updatedData = await getData("TopdailyStatus");
+      setRowData(updatedData || []);
     } catch (error) {
       console.error("Error saving data:", error);
     }
@@ -120,13 +89,13 @@ export default function DailyStatusTopForm({
       const prefix = selectedWarehouse
         ? selectedWarehouse.title.substring(0, 3).toUpperCase()
         : "";
-      const incrementedValue = generateIncrementedRefNumber(prefix);
+      const refNumber = generateIncrementedRefNumber(prefix);
 
       if (id) {
         setRowData((prevData) =>
           prevData.map((item) =>
             item.id === id
-              ? { ...item, [column]: value, refnumber: incrementedValue }
+              ? { ...item, [column]: value, refnumber: refNumber }
               : item
           )
         );
@@ -134,19 +103,18 @@ export default function DailyStatusTopForm({
         setNewRow((prevRow) => ({
           ...prevRow,
           [column]: value,
-          refnumber: incrementedValue,
+          refnumber: refNumber,
         }));
       }
     } else {
-      if (id) {
-        setRowData((prevData) =>
-          prevData.map((item) =>
-            item.id === id ? { ...item, [column]: value } : item
-          )
-        );
-      } else {
-        setNewRow((prevRow) => ({ ...prevRow, [column]: value }));
-      }
+      const updater = id ? setRowData : setNewRow;
+      updater((prev) =>
+        id
+          ? prev.map((item) =>
+              item.id === id ? { ...item, [column]: value } : item
+            )
+          : { ...prev, [column]: value }
+      );
     }
   };
 
@@ -154,156 +122,88 @@ export default function DailyStatusTopForm({
     const existingNumbers = rowData
       .map((item) => item.refnumber)
       .filter((ref) => ref && ref.startsWith(prefix));
-
-    const maxNumber = existingNumbers.reduce((max, ref) => {
-      const numPart = parseInt(ref.slice(3), 10) || 0;
-      return Math.max(max, numPart);
-    }, 0);
-
-    const newNumber = maxNumber + 1;
-    return `${prefix}${String(newNumber).padStart(4, "0")}`;
+    const maxNumber = existingNumbers.reduce(
+      (max, ref) => Math.max(max, parseInt(ref.slice(3), 10) || 0),
+      0
+    );
+    return `${prefix}${String(maxNumber + 1).padStart(4, "0")}`;
   };
 
   const handleSaveNewRow = async () => {
     await handleSaveClick(null, newRow, false);
     setNewRow(null);
-    setIsAddingNewRow(false); // Reset adding row mode after save
+    setIsAddingNewRow(false);
   };
 
   const handleCancelNewRow = () => {
     setNewRow(null);
-    setIsAddingNewRow(false); // Reset adding row mode on cancel
+    setIsAddingNewRow(false);
   };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [rowData]);
 
-  // Pagination Controls
   const totalPages = Math.ceil(rowData.length / itemsPerPage);
   const currentData = rowData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  const handlePageChange = (newPage) => {
+    setCurrentPage(Math.min(Math.max(newPage, 1), totalPages));
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-lg border border-gray-300 p-6">
-      {/* Header */}
+    <div className="w-full max-w-9xl mx-auto bg-white rounded-lg shadow-lg border border-gray-300 p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-800">
           {resourceTitle} Management
         </h2>
-        <p className="text-gray-500 text-sm">
-          View, edit, and manage daily status records.
-        </p>
         <button
           onClick={handleAddingNewRow}
-          className="flex items-center space-x-1 bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-blue-300"
+          className="flex items-center space-x-1 bg-green-700 text-white px-4 py-2 rounded-lg"
         >
-          <Plus className="w-4 h-4" />
-          <span>Entry</span>
+          <FilePlus2 className="w-4 h-4" />
+          <span>New</span>
         </button>
       </div>
 
-      {/* Table Container */}
       <div className="overflow-x-auto">
         {rowData.length > 0 ? (
           <table className="min-w-full text-sm text-left text-gray-700 border">
             <thead className="text-gray-700 bg-gray-100">
               <tr>
-                {TopColumns.map((columnName, i) => (
-                  <th key={i} scope="col" className="px-6 py-3">
-                    {columnName === "warehouseId" ? "Warehouse" : columnName}
+                {TopColumns.map((col, i) => (
+                  <th key={i} className="px-6 py-3">
+                    {col === "warehouseId" ? "Warehouse" : col}
                   </th>
                 ))}
-                <th scope="col" className="px-6 py-3 text-center">
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {/* Render existing data rows */}
-              {!isAddingNewRow &&
-                currentData.map((item, i) => (
-                  <tr
-                    key={i}
-                    className="bg-white border-b hover:bg-gray-50 transition-colors"
-                  >
-                    {TopColumns.map((columnName, j) => (
-                      <td key={j} className="px-5 py-3 whitespace-nowrap">
-                        {columnName === "warehouseId" ? (
-                          <select
-                            name={columnName}
-                            value={item[columnName] || ""}
-                            onChange={(e) =>
-                              handleInputChange(e, columnName, item.id)
-                            }
-                            className="w-full bg-white border border-gray-300 rounded-md p-2"
-                          >
-                            <option value="">Select Warehouse</option>
-                            {Warehouse.map((warehouse) => (
-                              <option key={warehouse.id} value={warehouse.id}>
-                                {warehouse.title}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            type="text"
-                            name={columnName}
-                            value={item[columnName] || ""}
-                            onChange={(e) =>
-                              handleInputChange(e, columnName, item.id)
-                            }
-                            className="w-full bg-white border border-gray-300 rounded-md p-1"
-                          />
-                        )}
-                      </td>
-                    ))}
-                    <td className="px-6 py-4 flex justify-center space-x-3">
-                      <button
-                        onClick={() => handleSaveClick(item.id, item, true)}
-                        className="text-green-600 hover:text-green-800"
-                      >
-                        <Save className="w-5 h-5" />
-                      </button>
-                      <Deletebtn
-                        id={item.id}
-                        endpoint={resourceTitle}
-                        onDeleteSuccess={fetchData}
-                      />
-                    </td>
-                  </tr>
-                ))}
-
-              {/* New row for adding data */}
-              {newRow && (
+              {isAddingNewRow ? (
                 <tr className="bg-gray-50">
-                  {TopColumns.map((columnName, j) => (
-                    <td key={j} className="px-6 py-4">
-                      {columnName === "warehouseId" ? (
+                  {TopColumns.map((col, i) => (
+                    <td key={i} className="px-6 py-4">
+                      {col === "warehouseId" ? (
                         <select
-                          name={columnName}
-                          value={newRow[columnName] || ""}
-                          onChange={(e) => handleInputChange(e, columnName)}
+                          value={newRow[col] || ""}
+                          onChange={(e) => handleInputChange(e, col)}
                           className="w-full bg-white border border-gray-300 rounded-md p-1"
                         >
                           <option value="">Select Warehouse</option>
-                          {Warehouse.map((warehouse) => (
-                            <option key={warehouse.id} value={warehouse.id}>
-                              {warehouse.title}
+                          {Warehouse.map((wh) => (
+                            <option key={wh.id} value={wh.id}>
+                              {wh.title}
                             </option>
                           ))}
                         </select>
                       ) : (
                         <input
                           type="text"
-                          name={columnName}
-                          value={newRow[columnName] || ""}
-                          onChange={(e) => handleInputChange(e, columnName)}
+                          value={newRow[col] || ""}
+                          onChange={(e) => handleInputChange(e, col)}
                           className="w-full bg-white border border-gray-300 rounded-md p-1"
                         />
                       )}
@@ -326,81 +226,108 @@ export default function DailyStatusTopForm({
                     </button>
                   </td>
                 </tr>
+              ) : (
+                currentData.map((item, i) => (
+                  <React.Fragment key={i}>
+                    <tr className="bg-white border-b hover:bg-gray-50">
+                      {TopColumns.map((col, j) => (
+                        <td key={j} className="px-5 py-3 whitespace-nowrap">
+                          {col === "warehouseId" ? (
+                            <select
+                              value={item[col] || ""}
+                              onChange={(e) =>
+                                handleInputChange(e, col, item.id)
+                              }
+                              className="w-full bg-white border border-gray-300 rounded-md p-2"
+                            >
+                              <option value="">Select Warehouse</option>
+                              {Warehouse.map((wh) => (
+                                <option key={wh.id} value={wh.id}>
+                                  {wh.title}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              type="text"
+                              value={item[col] || ""}
+                              onChange={(e) =>
+                                handleInputChange(e, col, item.id)
+                              }
+                              className="w-full bg-white border border-gray-300 rounded-md p-1"
+                            />
+                          )}
+                        </td>
+                      ))}
+                      <td className="px-6 py-4 flex justify-center space-x-3">
+                        <button
+                          onClick={() => handleSaveClick(item.id, item, true)}
+                          className="text-green-600 hover:text-green-800"
+                        >
+                          <Save className="w-5 h-5" />
+                        </button>
+                        <Deletebtn
+                          id={item.id}
+                          endpoint={resourceTitle}
+                          onDeleteSuccess={() =>
+                            setRowData((prev) =>
+                              prev.filter((data) => data.id !== item.id)
+                            )
+                          }
+                        />
+                      </td>
+                    </tr>
+
+                    {/* Inline Table for Each Item */}
+                    <tr>
+                      <td colSpan={TopColumns.length + 1} className="p-4">
+                        <DailyStatusInline
+                          Categories={CategoriesData}
+                          columns={[
+                            "topdailyStatusId",
+                            "categoryId",
+                            "ownership",
+                            "opqty",
+                            "idelqty",
+                            "downqty",
+                            "remark",
+                            "refnumber",
+                          ]}
+                          resourceTitle="DailyStatus"
+                          parentRefnumber={item.refnumber || ""}
+                          parenttopdailyStatusId={item.id} // Pass the item's ID here
+                        />
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                ))
               )}
             </tbody>
           </table>
         ) : (
-          <p className="p-6 text-gray-600 text-center">
-            There is no data to display.
-          </p>
+          <p className="text-gray-600">No data available.</p>
         )}
       </div>
 
-      {/* Sub Table Component */}
-      <div className="mt-8 w-full">
-        <DailyStatusInline
-          Categories={CategoriesData}
-          data={rowData}
-          columns={columns}
-          resourceTitle="DailyStatus"
-        />
-      </div>
-
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex space-x-2">
-          <span className="px-3 py-1">Record:</span>
-          <button
-            onClick={() => setCurrentPage(1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-400"
-          >
-            <ChevronLast className="w-4 h-4 transform rotate-180" />
+      {totalPages > 1 && (
+        <div className="flex justify-center space-x-4 mt-4">
+          <button onClick={() => handlePageChange(1)}>
+            <ChevronLast />
           </button>
-          <button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-400"
-          >
-            <ChevronLeft className="w-4 h-4" />
+          <button onClick={() => handlePageChange(currentPage - 1)}>
+            <ChevronLeft />
           </button>
-
-          {/* Editable Page Number Input */}
-          <input
-            type="number"
-            value={currentPage}
-            onChange={(e) => {
-              let page = parseInt(e.target.value, 10);
-              if (page >= 1 && page <= totalPages) {
-                setCurrentPage(page);
-              } else if (page < 1) {
-                setCurrentPage(1);
-              } else if (page > totalPages) {
-                setCurrentPage(totalPages);
-              }
-            }}
-            className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center"
-            min="1"
-            max={totalPages}
-          />
-
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-400"
-          >
-            <ChevronRight className="w-4 h-4" />
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button onClick={() => handlePageChange(currentPage + 1)}>
+            <ChevronRight />
           </button>
-          <button
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-400"
-          >
-            <ChevronLast className="w-4 h-4" />
+          <button onClick={() => handlePageChange(totalPages)}>
+            <ChevronLast />
           </button>
-          <span className="px-3 py-1">{`of ${totalPages}`}</span>
         </div>
-      </div>
+      )}
     </div>
   );
 }

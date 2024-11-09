@@ -1,18 +1,16 @@
 // DailyStatusPage.js (Server Component)
-import DailyStatusForm from "@/components/dashboard/DailyStatusForm";
-import DailyStatusSubTable from "@/components/dashboard/DailyStatusSubTable";
+
 import DailyStatusTopForm from "@/components/dashboard/DailyStatusTopForm";
 import FixedHeader from "@/components/dashboard/FixedHeader";
 import { getData } from "@/lib/getData";
 
 export default async function DailyStatus() {
-  const dailystatusData = await getData("DailyStatus");
+  // const dailystatusData = await getData("DailyStatus");
   const CategoriesData = getData(`catagories`);
-  // const [Categories] = await Promise.all([CategoriesData]);
+
   const warehouseData = getData(`warehouse`);
-  // const [Warehouse] = await Promise.all([warehouseData]);
+
   const dailystatusTopData = getData(`TopdailyStatus`);
-  // const [dailystatusTop] = await Promise.all([dailystatusTopData]);
 
   const [Categories, Warehouse, dailystatusTop] = await Promise.all([
     CategoriesData,
@@ -20,16 +18,16 @@ export default async function DailyStatus() {
     dailystatusTopData,
   ]);
 
-  const TopColumns = ["warehouseId", "date", "refnumber"];
-  const columns = [
-    "categoryId",
-    "ownership",
-    "opqty",
-    "idelqty",
-    "downqty",
-    "remark",
-    "refnumber",
-  ];
+  const TopColumns = ["warehouseId", "date", "refnumber", "id"];
+  // const columns = [
+  //   "categoryId",
+  //   "ownership",
+  //   "opqty",
+  //   "idelqty",
+  //   "downqty",
+  //   "remark",
+  //   "refnumber",
+  // ];
   return (
     <div>
       <FixedHeader title="Daily Status" newLink="#" />
