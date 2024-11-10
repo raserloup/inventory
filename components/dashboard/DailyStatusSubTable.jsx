@@ -41,7 +41,7 @@ export default function DailyStatusInline({
   const fetchData = async () => {
     try {
       const data = await getData(
-        `DailyStatus/parent/${parenttopdailyStatusId}`
+        `DailyStatus/parentId/${parenttopdailyStatusId}`
       );
       if (data && data.length > 0) {
         setRowData(data);
@@ -134,12 +134,14 @@ export default function DailyStatusInline({
                 <th
                   key={i}
                   scope="col"
-                  className="px-5 py-2 border border-gray-200"
+                  className="px-5 py-2 border border-gray-200 text-sm"
                 >
                   {columnName === "categoryId" ? "Equipment Type" : columnName}
                 </th>
               ))}
-              <th className="px-4 py-2 border border-gray-300">Actions</th>
+              <th className="px-4 py-2 border border-gray-300 text-sm">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -149,7 +151,10 @@ export default function DailyStatusInline({
                 className="bg-white hover:bg-gray-100 transition"
               >
                 {columns.map((columnName, i) => (
-                  <td key={i} className="px-5 py-2 border border-gray-200">
+                  <td
+                    key={i}
+                    className="px-5 py-2 border border-gray-200 text-sm"
+                  >
                     {columnName === "categoryId" ||
                     columnName === "ownership" ? (
                       <select
@@ -158,7 +163,7 @@ export default function DailyStatusInline({
                         onChange={(e) =>
                           handleInputChange(e, columnName, item.id)
                         }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-2 focus:ring-orange-500 p-2 w-auto"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-2 focus:ring-orange-500 p-2 w-auto text-sm"
                       >
                         {(columnName === "categoryId" && Categories.length > 0
                           ? Categories
@@ -184,7 +189,7 @@ export default function DailyStatusInline({
                         onChange={(e) =>
                           handleInputChange(e, columnName, item.id)
                         }
-                        className="bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 w-full p-1"
+                        className="bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 w-full p-1 text-sm"
                       />
                     )}
                   </td>
@@ -194,7 +199,7 @@ export default function DailyStatusInline({
                     onClick={() => handleSaveClick(item.id, item, true)}
                     className="text-green-500 hover:text-green-700 transition"
                   >
-                    <FilePenLine className="w-5 h-5 inline-block" />
+                    <FilePenLine className="w-4 h-4 inline-block" />
                   </button>
                   <Deletebtn
                     id={item.id}
@@ -204,59 +209,67 @@ export default function DailyStatusInline({
                 </td>
               </tr>
             ))}
-            <tr className="bg-gray-50 hover:bg-gray-100 transition">
-              {columns.map((columnName, j) => (
-                <td key={j} className="px-5 py-2 border border-gray-200">
-                  {columnName === "categoryId" || columnName === "ownership" ? (
-                    <select
-                      name={columnName}
-                      value={newRow[columnName] || ""}
-                      onChange={(e) => handleInputChange(e, columnName)}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-2 focus:ring-orange-500 p-1"
-                    >
-                      {(columnName === "categoryId" && Categories.length > 0
-                        ? Categories
-                        : ownership
-                      ).map((option, i) => (
-                        <option
-                          key={i}
-                          value={
-                            columnName === "ownership" ? option : option.id
-                          }
-                        >
-                          {columnName === "ownership"
-                            ? option
-                            : option.title || option.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      name={columnName}
-                      value={newRow[columnName] || ""}
-                      onChange={(e) => handleInputChange(e, columnName)}
-                      className="bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 w-full p-1"
-                    />
-                  )}
-                </td>
-              ))}
-              <td className="px-3 py-2 text-center">
-                <button
-                  onClick={handleSaveNewRow}
-                  className="text-orange-500 hover:text-green-700 transition"
-                >
-                  <Save className="w-5 h-5 inline-block" />
-                </button>
-              </td>
-            </tr>
           </tbody>
         </table>
       ) : (
         <p className="p-4 text-lg text-gray-500 text-center">
-          No data available to display
+          No data available to display, you can insert your data
         </p>
       )}
+
+      {/* Add New Row */}
+      <table className="min-w-full text-sm text-left text-gray-700 border">
+        <tbody>
+          <tr className="bg-gray-50 hover:bg-gray-100 transition">
+            {columns.map((columnName, j) => (
+              <td key={j} className="px-5 py-2 border border-gray-200 text-sm">
+                <div className="mb-1 text-sm text-center text-gray-500">
+                  {/* Title for the column */}
+                  {columnName === "categoryId" ? "Equipment Type" : columnName}
+                </div>
+                {columnName === "categoryId" || columnName === "ownership" ? (
+                  <select
+                    name={columnName}
+                    value={newRow[columnName] || ""}
+                    onChange={(e) => handleInputChange(e, columnName)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded focus:ring-2 focus:ring-orange-500 p-1 text-sm"
+                  >
+                    {(columnName === "categoryId" && Categories.length > 0
+                      ? Categories
+                      : ownership
+                    ).map((option, i) => (
+                      <option
+                        key={i}
+                        value={columnName === "ownership" ? option : option.id}
+                      >
+                        {columnName === "ownership"
+                          ? option
+                          : option.title || option.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name={columnName}
+                    value={newRow[columnName] || ""}
+                    onChange={(e) => handleInputChange(e, columnName)}
+                    className="bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 w-full p-1 text-sm"
+                  />
+                )}
+              </td>
+            ))}
+            <td className="px-3 py-2 text-center">
+              <button
+                onClick={handleSaveNewRow}
+                className="text-orange-500 hover:text-green-700 transition"
+              >
+                <Save className="w-4 h-4 inline-block" />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

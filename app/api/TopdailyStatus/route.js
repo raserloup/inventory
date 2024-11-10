@@ -43,7 +43,7 @@ export async function GET(request) {
     try {
         const dailyStatusTop = await db.TopdailyStatus.findMany({
             orderBy: {
-                createdAt: 'asc' //latest Warehouse
+                createdAt: 'asc' //latest Warehouse//  desc
             },
             include: {
                 warehouse: true,////Returns single warehouse by id which is related

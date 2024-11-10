@@ -176,7 +176,7 @@ model DailyStatus {
 
 model TopdailyStatus {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  date        String
+  date        DateTime
   refnumber   String
   warehouse   Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
   warehouseId String        @db.ObjectId

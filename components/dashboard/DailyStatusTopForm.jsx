@@ -8,18 +8,20 @@ import {
   ChevronRight,
   ChevronLeft,
   FilePlus2,
+  ChevronFirst,
 } from "lucide-react";
 import Deletebtn from "./Deletebtn";
 import { getData } from "@/lib/getData";
 import { makePOSTRequest, makePUTRequest } from "@/lib/apiRequest";
 import DailyStatusInline from "./DailyStatusSubTable";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function DailyStatusTopForm({
   data = [],
   TopColumns = [],
   resourceTitle,
   Warehouse,
-  // Categories,
 }) {
   const [isAddingNewRow, setIsAddingNewRow] = useState(false);
   const [newRow, setNewRow] = useState(null);
@@ -28,6 +30,8 @@ export default function DailyStatusTopForm({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1;
   const [CategoriesData, setCategory] = useState([]);
+  const [filterDate, setFilterDate] = useState(null); // Filter date state
+  const [filterRefNumber, setFilterRefNumber] = useState(""); // Filter refnumber state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,10 +56,6 @@ export default function DailyStatusTopForm({
     fetchData();
     fetchCategory();
   }, []);
-
-  useEffect(() => {
-    setCurrentPage(Math.ceil(rowData.length / itemsPerPage));
-  }, [rowData]);
 
   const handleAddingNewRow = () => {
     setNewRow({
@@ -139,58 +139,132 @@ export default function DailyStatusTopForm({
     setNewRow(null);
     setIsAddingNewRow(false);
   };
+
+  const handleDateChange = (date) => {
+    if (newRow) {
+      const isoDate = date ? date.toISOString() : "";
+      setNewRow((prevRow) => ({ ...prevRow, date: isoDate }));
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
   }, [rowData]);
 
-  const totalPages = Math.ceil(rowData.length / itemsPerPage);
-  const currentData = rowData.slice(
+  const handlePageChange = (newPage) => {
+    setCurrentPage(Math.min(Math.max(newPage, 1), totalPages));
+  };
+  const handleDateFilterChange = (date) => {
+    setFilterDate(date);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+  const handleRefNumberFilterChange = (e) => {
+    setFilterRefNumber(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
+  const filteredData = rowData.filter((item) => {
+    const matchesDate =
+      !filterDate ||
+      (item.date &&
+        new Date(item.date).toDateString() === filterDate.toDateString());
+    const matchesRefNumber =
+      !filterRefNumber ||
+      (item.refnumber && item.refnumber.includes(filterRefNumber));
+    return matchesDate && matchesRefNumber;
+  });
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(Math.min(Math.max(newPage, 1), totalPages));
-  };
-
   return (
     <div className="w-full max-w-9xl mx-auto bg-white rounded-lg shadow-lg border border-gray-300 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
+      <div className="flex flex-col sm:flex-row justify-between bg-gradient-to-r from-blue-500 via-red-300 to-blue-500 p-6 rounded-lg shadow-lg mb-6">
+        <h2 className="text-lg font-semibold text-white mb-4 sm:mb-0 sm:text-xl">
           {resourceTitle} Management
         </h2>
+
+        {/* Filters by date and ref number */}
+        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
+          {/* Date Filter */}
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium text-white">
+              Filter by Date:
+            </span>
+            <DatePicker
+              selected={filterDate}
+              onChange={handleDateFilterChange}
+              className="bg-white border border-gray-300 rounded-md p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+              dateFormat="yyyy-MM-dd"
+              isClearable
+              placeholderText="Select date"
+            />
+          </div>
+
+          {/* RefNumber Filter */}
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <span className="text-sm font-medium text-white">
+              Filter by RefNumber:
+            </span>
+            <div className="relative w-full sm:w-auto">
+              <input
+                type="text"
+                value={filterRefNumber}
+                onChange={handleRefNumberFilterChange}
+                className="w-full sm:w-48 bg-white border border-gray-300 rounded-md p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
+                placeholder="Enter refnumber"
+              />
+              {filterRefNumber && (
+                <button
+                  onClick={() => setFilterRefNumber("")} // Clear filter
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-teal-500"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* New Row Button */}
         <button
           onClick={handleAddingNewRow}
-          className="flex items-center space-x-1 bg-green-700 text-white px-4 py-2 rounded-lg"
+          //   className="flex items-center space-x-2  px-4 py-2 text-white rounded-lg text-sm hover:scale-105 transition-transform duration-200 ease-in-out shadow-lg mt-4 sm:mt-0"
+          className="p-1 bg-blue-600 rounded-sm
+         px-4 flex items-center space-x-2 text-white shadow-lg mt-4 sm:mt-0 hover:scale-105 transition-transform duration-200 ease-in-out"
         >
           <FilePlus2 className="w-4 h-4" />
-          <span>New</span>
+          <span className="text-sm">New</span>
         </button>
       </div>
 
+      {/* Table with filtered data */}
       <div className="overflow-x-auto">
-        {rowData.length > 0 ? (
+        {filteredData.length > 0 ? (
           <table className="min-w-full text-sm text-left text-gray-700 border">
             <thead className="text-gray-700 bg-gray-100">
               <tr>
                 {TopColumns.map((col, i) => (
-                  <th key={i} className="px-6 py-3">
+                  <th key={i} className="px-6 py-3 text-sm">
                     {col === "warehouseId" ? "Warehouse" : col}
                   </th>
                 ))}
-                <th className="px-6 py-3 text-center">Actions</th>
+                <th className="px-6 py-3 text-sm text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {isAddingNewRow ? (
-                <tr className="bg-gray-50">
+                <tr className="bg-white border-b hover:bg-gray-50">
                   {TopColumns.map((col, i) => (
-                    <td key={i} className="px-6 py-4">
+                    <td key={i} className="px-5 py-3 text-sm whitespace-nowrap">
                       {col === "warehouseId" ? (
                         <select
                           value={newRow[col] || ""}
                           onChange={(e) => handleInputChange(e, col)}
-                          className="w-full bg-white border border-gray-300 rounded-md p-1"
+                          className="w-full bg-white border border-gray-300 rounded-md p-2 text-sm"
                         >
                           <option value="">Select Warehouse</option>
                           {Warehouse.map((wh) => (
@@ -199,12 +273,19 @@ export default function DailyStatusTopForm({
                             </option>
                           ))}
                         </select>
+                      ) : col === "date" ? (
+                        <DatePicker
+                          selected={newRow.date ? new Date(newRow.date) : null}
+                          onChange={handleDateChange}
+                          className="w-full bg-white border border-gray-300 rounded-md p-2 text-sm"
+                          dateFormat="yyyy-MM-dd"
+                        />
                       ) : (
                         <input
                           type="text"
                           value={newRow[col] || ""}
                           onChange={(e) => handleInputChange(e, col)}
-                          className="w-full bg-white border border-gray-300 rounded-md p-1"
+                          className="w-full bg-white border border-gray-300 rounded-md p-1 text-sm"
                         />
                       )}
                     </td>
@@ -212,17 +293,17 @@ export default function DailyStatusTopForm({
                   <td className="px-6 py-4 flex justify-center space-x-3">
                     <button
                       onClick={handleSaveNewRow}
-                      className="text-green-600 hover:text-green-800 flex items-center space-x-1"
+                      className="text-green-600 hover:text-green-800 flex items-center space-x-1 text-sm"
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save</span>
+                      <span className="text-sm">Save</span>
                     </button>
                     <button
                       onClick={handleCancelNewRow}
-                      className="text-red-600 hover:text-red-800 flex items-center space-x-1"
+                      className="text-red-600 hover:text-red-800 flex items-center space-x-1 text-sm"
                     >
                       <X className="w-4 h-4" />
-                      <span>Cancel</span>
+                      <span className="text-sm">Cancel</span>
                     </button>
                   </td>
                 </tr>
@@ -231,14 +312,17 @@ export default function DailyStatusTopForm({
                   <React.Fragment key={i}>
                     <tr className="bg-white border-b hover:bg-gray-50">
                       {TopColumns.map((col, j) => (
-                        <td key={j} className="px-5 py-3 whitespace-nowrap">
+                        <td
+                          key={j}
+                          className="px-5 py-3 text-sm whitespace-nowrap"
+                        >
                           {col === "warehouseId" ? (
                             <select
                               value={item[col] || ""}
                               onChange={(e) =>
                                 handleInputChange(e, col, item.id)
                               }
-                              className="w-full bg-white border border-gray-300 rounded-md p-2"
+                              className="w-full bg-white border border-gray-300 rounded-md p-2 text-sm"
                             >
                               <option value="">Select Warehouse</option>
                               {Warehouse.map((wh) => (
@@ -247,6 +331,19 @@ export default function DailyStatusTopForm({
                                 </option>
                               ))}
                             </select>
+                          ) : col === "date" ? (
+                            <DatePicker
+                              selected={item.date ? new Date(item.date) : null}
+                              onChange={(date) =>
+                                handleInputChange(
+                                  { target: { value: date } },
+                                  col,
+                                  item.id
+                                )
+                              }
+                              className="w-full bg-white border border-gray-300 rounded-md p-2 text-sm"
+                              dateFormat="yyyy-MM-dd"
+                            />
                           ) : (
                             <input
                               type="text"
@@ -254,48 +351,44 @@ export default function DailyStatusTopForm({
                               onChange={(e) =>
                                 handleInputChange(e, col, item.id)
                               }
-                              className="w-full bg-white border border-gray-300 rounded-md p-1"
+                              className="w-full bg-white border border-gray-300 rounded-md p-1 text-sm"
                             />
                           )}
                         </td>
                       ))}
-                      <td className="px-6 py-4 flex justify-center space-x-3">
+                      <td className="px-6 py-4 flex justify-center space-x-3 text-sm">
                         <button
                           onClick={() => handleSaveClick(item.id, item, true)}
-                          className="text-green-600 hover:text-green-800"
+                          className="text-green-600 hover:text-green-800 text-sm"
                         >
-                          <Save className="w-5 h-5" />
+                          <Save className="w-4 h-4" />
                         </button>
                         <Deletebtn
+                          data={rowData}
+                          setData={setRowData}
                           id={item.id}
-                          endpoint={resourceTitle}
-                          onDeleteSuccess={() =>
-                            setRowData((prev) =>
-                              prev.filter((data) => data.id !== item.id)
-                            )
-                          }
+                          title="TopdailyStatus"
                         />
                       </td>
                     </tr>
-
-                    {/* Inline Table for Each Item */}
                     <tr>
-                      <td colSpan={TopColumns.length + 1} className="p-4">
+                      <td colSpan={TopColumns.length + 1}>
                         <DailyStatusInline
                           Categories={CategoriesData}
                           columns={[
-                            "topdailyStatusId",
+                            // { title: "Id", field: "topdailyStatusId" },
+                            //"topdailyStatusId",
                             "categoryId",
                             "ownership",
                             "opqty",
                             "idelqty",
                             "downqty",
                             "remark",
-                            "refnumber",
+                            // "refnumber",
                           ]}
                           resourceTitle="DailyStatus"
                           parentRefnumber={item.refnumber || ""}
-                          parenttopdailyStatusId={item.id} // Pass the item's ID here
+                          parenttopdailyStatusId={item.id}
                         />
                       </td>
                     </tr>
@@ -305,29 +398,39 @@ export default function DailyStatusTopForm({
             </tbody>
           </table>
         ) : (
-          <p className="text-gray-600">No data available.</p>
+          <p className="text-center text-gray-700 py-6">
+            No data available for selected date.
+          </p>
         )}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center space-x-4 mt-4">
-          <button onClick={() => handlePageChange(1)}>
-            <ChevronLast />
-          </button>
-          <button onClick={() => handlePageChange(currentPage - 1)}>
-            <ChevronLeft />
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button onClick={() => handlePageChange(currentPage + 1)}>
-            <ChevronRight />
-          </button>
-          <button onClick={() => handlePageChange(totalPages)}>
-            <ChevronLast />
-          </button>
-        </div>
-      )}
+      {/* Pagination */}
+      <div className="flex justify-center space-x-4 mt-4 text-sm">
+        <button onClick={() => handlePageChange(1)} className="text-gray-500">
+          <ChevronFirst />
+        </button>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          className="text-gray-500"
+        >
+          <ChevronLeft />
+        </button>
+        <span className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          className="text-gray-500"
+        >
+          <ChevronRight />
+        </button>
+        <button
+          onClick={() => handlePageChange(totalPages)}
+          className="text-gray-500"
+        >
+          <ChevronLast />
+        </button>
+      </div>
     </div>
   );
 }
